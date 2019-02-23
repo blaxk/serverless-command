@@ -1,0 +1,201 @@
+{
+	"name": "serverless-command",
+	"description": "serverless-vscode 를 활용하여 기능확장",
+	"icon": "images/icon.png",
+	"version": "1.0.4",
+	"publisher": "blaxk",
+	"author": "blaxk",
+	"engines": {
+		"vscode": "^1.19.0"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/HyperBrain/serverless-vscode"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:serverlessOutline"
+	],
+	"main": "./out/src/extension.js",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Serverless Configuration",
+			"properties": {
+				"serverless.useGlobal": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use global Serverless installation"
+				},
+				"serverless.slsDebug": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set SLS_DEBUG for debug output"
+				},
+				"serverless.aws.defaultStage": {
+					"type": "string",
+					"default": "dev",
+					"enum": [
+						"dev",
+						"prod"
+					],
+					"description": "Default stage for builds and deployments"
+				},
+				"serverless.aws.defaultRegion": {
+					"type": "string",
+					"default": "ap-northeast-2",
+					"description": "Default region for builds and deployments"
+				},
+				"serverless.defaultNodeModulesPath": {
+					"type": "string",
+					"default": "/usr/local/lib/node_modules",
+					"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
+				}
+			}
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "serverlessOutline",
+					"name": "Serverless",
+					"when": "resourceLangId == 'yaml'"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "serverless.package",
+				"title": "Package service",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.deploy",
+				"title": "Deploy service",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.remove",
+				"title": "Remove service",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.openHandler",
+				"title": "Open handler",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.logs",
+				"title": "Show logs",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.resolve",
+				"title": "Resolve",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.deployFunction",
+				"title": "Deploy function",
+				"category": "Serverless"
+			},
+			{
+				"command": "serverless.invoke",
+				"title": "Invoke function",
+				"category": "Serverless"
+			}
+		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "serverless.resolve",
+					"when": "viewItem == container",
+					"group": "Serverless@2"
+				},
+				{
+					"command": "serverless.package",
+					"when": "viewItem == container",
+					"group": "Serverless@2"
+				},
+				{
+					"command": "serverless.deploy",
+					"when": "viewItem == container",
+					"group": "Serverless@1"
+				},
+				{
+					"command": "serverless.remove",
+					"when": "viewItem == container",
+					"group": "Serverless@1"
+				},
+				{
+					"command": "serverless.openHandler",
+					"when": "viewItem == function"
+				},
+				{
+					"command": "serverless.logs",
+					"when": "viewItem == function"
+				},
+				{
+					"command": "serverless.deployFunction",
+					"when": "viewItem == function"
+				},
+				{
+					"command": "serverless.invoke",
+					"when": "viewItem == function"
+				}
+			],
+			"explorer/context": [
+				{
+					"when": "filesExplorerFocus",
+					"command": "serverless.package",
+					"group": "Serverless@2"
+				},
+				{
+					"when": "filesExplorerFocus",
+					"command": "serverless.deploy",
+					"group": "Serverless@1"
+				},
+				{
+					"when": "filesExplorerFocus",
+					"command": "serverless.remove",
+					"group": "Serverless@1"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"lint": "tslint \"src/**/*.ts\"",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"package": "vsce package",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.0.10",
+		"@types/chai-as-promised": "^7.1.0",
+		"@types/fs-extra": "^5.0.5",
+		"@types/js-yaml": "^3.10.1",
+		"@types/lodash": "^4.14.91",
+		"@types/mocha": "^2.2.44",
+		"@types/node": "^8.5.1",
+		"@types/sinon": "^4.1.2",
+		"@types/sinon-chai": "^2.7.29",
+		"chai": "^4.1.2",
+		"chai-as-promised": "^7.1.1",
+		"mocha": "^4.0.1",
+		"sinon": "^4.1.3",
+		"sinon-chai": "^2.14.0",
+		"tslint": "^5.8.0",
+		"typescript": "^2.6.2",
+		"vscode": "^1.1.10"
+	},
+	"dependencies": {
+		"fs-extra": "^7.0.1",
+		"js-yaml": "^3.10.0",
+		"jsonc-parser": "^1.0.0",
+		"lodash": "^4.17.4"
+	}
+}
