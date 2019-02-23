@@ -176,7 +176,6 @@
 	"devDependencies": {
 		"@types/chai": "^4.0.10",
 		"@types/chai-as-promised": "^7.1.0",
-		"@types/fs-extra": "^5.0.5",
 		"@types/js-yaml": "^3.10.1",
 		"@types/lodash": "^4.14.91",
 		"@types/mocha": "^2.2.44",
@@ -193,7 +192,6 @@
 		"vscode": "^1.1.10"
 	},
 	"dependencies": {
-		"fs-extra": "^7.0.1",
 		"js-yaml": "^3.10.0",
 		"jsonc-parser": "^1.0.0",
 		"lodash": "^4.17.4"

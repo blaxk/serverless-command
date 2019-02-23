@@ -1,6 +1,5 @@
 
 import * as _ from "lodash";
-import * as fse from 'fs-extra';
 import { ExtensionContext, Uri, window } from "vscode";
 import { CommandBase } from "../CommandBase";
 import { Serverless } from "../Serverless";
@@ -22,26 +21,18 @@ export class Invoke extends CommandBase {
 		}
 
 		return CommandBase.askForStageAndRegion()
-		.then( async result => {
+		.then( result => {
 			const functionName: string = node.name
 			const filePath: string = `${node.documentRoot}/test/${functionName}.json`;
-			let obj: any = null;
-
-			try {
-				obj = await fse.readJson( filePath )
-			} catch (err) {}
 
 			let options = {
 				cwd: node.documentRoot,
 				function: functionName,
 				region: result[ 1 ],
 				stage: result[ 0 ],
+				path: filePath,
 				log: false
 			};
-
-			if ( obj ) {
-				options = Object.assign( options, { path: filePath });
-			}
 
 			return Serverless.invoke( "invoke", options, result[ 2 ] );
 		});

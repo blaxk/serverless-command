@@ -89,7 +89,7 @@ deployment does not replace a service deployment. See the Serverless documentati
 
 ##### Invoke Function
 
-함수를 호출할때 사용될 데이타를 `test/{함수명}.json` 으로 저장해 놓으면 해당 json 파일을 참조하여 함수를 호출
+함수를 호출할때 사용될 데이타를 `test/{함수명}.json` 파일을 참조하여 함수를 호출
 
 ##### Show logs
 

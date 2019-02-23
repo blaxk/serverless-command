@@ -112,7 +112,7 @@ export class Serverless {
 					cwd: this.cwd,
 				} );
 
-			// deploy되지 않은 어플리케이션을 호출할때 아무 이벤트도 받지 못하는 이슈때문에 사용 (10초 Timeout)
+			// 특정 오류에서 아무 이벤트도 받지 못하는 이슈때문에 사용 (10초 Timeout)
 			if ( /invoke/.test( command ) ) {
 				this.timer = setTimeout( () => {
 					window.showErrorMessage( 'Serverless 오류! Serverless 프로세스를 중지 하시겠습니까?',
