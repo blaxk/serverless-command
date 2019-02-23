@@ -22,11 +22,11 @@ export class Remove extends CommandBase {
 
 		return CommandBase.askForStageAndRegion()
 			.then( result => {
-				return window.showInputBox({
-					prompt: `Confirm `,
-					placeHolder: '삭제하시려면 "YES"를 입력하세요.'
-				}).then( value => {
-					if ( value !== 'YES' ) return;
+				return window.showWarningMessage( 'Serverless service를 정말로 삭제 하시겠습니까?',
+					{},
+					{ title: 'Serverless service 삭제' }
+				).then( value => {
+					if ( !value ) return;
 
 					const options = {
 						cwd: node.documentRoot,

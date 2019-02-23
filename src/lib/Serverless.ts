@@ -48,6 +48,7 @@ export class Serverless {
 
 	private cwd: string;
 	private channel: any;
+	private timer: any = null;
 
 	private constructor(cwd: string) {
 		this.cwd = cwd;
@@ -100,28 +101,9 @@ export class Serverless {
 
 		const serverlessCommand = `Running "serverless ${command} ${_.join(options, " ")}"`;
 		this.channel.appendLine( serverlessCommand );
-
-		let timer: any = null;
-		let isTouched = false;
+		this.stopTimer();
 
 		return new Promise( ( resolve, reject ) => {
-			// deploy되지 않은 어플리케이션을 호출할때 아무 이벤트도 받지 못하는 이슈때문에 사용 (20초 Timeout)
-			if ( /invoke --function/.test( command ) ) {
-				if ( timer ) clearTimeout(timer);
-				timer = setTimeout( () => {
-					if ( isTouched ) return;
-
-					window.showInputBox( {
-						prompt: `Confirm `,
-						placeHolder: 'Serverless 오류! 프로세스를 중지하려면 "YES"를 입력하세요.'
-					} ).then( value => {
-						if ( value !== 'YES' || isTouched ) return;
-						sls.kill( 'SIGHUP' );
-						reject();
-					} );
-				}, 20000 );
-			}
-
 			const sls = spawn( "node", _.concat(
 				[ `${nodeModulesPath}/serverless/bin/serverless` ],
 				_.split( command, " " ),
@@ -130,23 +112,37 @@ export class Serverless {
 					cwd: this.cwd,
 				} );
 
+			// deploy되지 않은 어플리케이션을 호출할때 아무 이벤트도 받지 못하는 이슈때문에 사용 (10초 Timeout)
+			if ( /invoke/.test( command ) ) {
+				this.timer = setTimeout( () => {
+					window.showErrorMessage( 'Serverless 오류! Serverless 프로세스를 중지 하시겠습니까?',
+						{},
+						{ title: 'Serverless 중지' }
+					).then( value => {
+						if ( !value ) return;
+						sls.kill( 'SIGHUP' );
+						reject();
+					});
+				}, 10000 );
+			}
+
 			sls.on( "error", err => {
-				isTouched = true;
+				this.stopTimer();
 				reject( err );
 			} );
 
 			sls.stdout.on( "data", data => {
-				isTouched = true;
+				this.stopTimer();
 				this.channel.append( data.toString() );
 			} );
 
 			sls.stderr.on( "data", data => {
-				isTouched = true;
+				this.stopTimer();
 				this.channel.append( data.toString() );
 			} );
 
 			sls.on( "exit", code => {
-				isTouched = true;
+				this.stopTimer();
 
 				if ( code !== 0 ) {
 					reject( new Error( `Command exited with ${code}` ) );
@@ -156,6 +152,13 @@ export class Serverless {
 				resolve();
 			} );
 		});
+	}
+
+	private stopTimer (): void {
+		if ( this.timer ) {
+			clearTimeout( this.timer );
+			this.timer = null;
+		}
 	}
 
 }
