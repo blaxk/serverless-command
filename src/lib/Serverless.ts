@@ -57,40 +57,40 @@ export class Serverless {
 		this.channel = window.createOutputChannel("Serverless");
 		this.channel.show(true);
 
-		const serverlessCommand = `Running "serverless ${command} ${_.join(options, " ")}"`;
+		const serverlessCommand = `Running - "serverless ${command} ${_.join(options, " ")}"`;
 		this.channel.appendLine(serverlessCommand);
 
-		return new Promise((resolve, reject) => {
+		return new Promise( ( resolve, reject ) => {
 			let result = "";
 			const sls = spawn( "node", _.concat(
 				[ `${nodeModulesPath}/serverless/bin/serverless` ],
-				_.split(command, " "),
+				_.split( command, " " ),
 				options,
 			), {
-				cwd: this.cwd,
-			});
+					cwd: this.cwd,
+				} );
 
-			sls.on("error", err => {
-				reject(err);
-			});
+			sls.on( "error", err => {
+				reject( err );
+			} );
 
-			sls.stdout.on("data", data => {
+			sls.stdout.on( "data", data => {
 				result += data.toString();
-			});
+			} );
 
-			sls.stderr.on("data", data => {
-				this.channel.append(data.toString());
-			});
+			sls.stderr.on( "data", data => {
+				this.channel.append( data.toString() );
+			} );
 
-			sls.on("exit", code => {
-				if (code !== 0) {
-					this.channel.append(result);
-					reject(new Error(`Command exited with ${code}`));
+			sls.on( "exit", code => {
+				if ( code !== 0 ) {
+					this.channel.append( result );
+					reject( new Error( `Command exited with ${code}` ) );
 				}
-				this.channel.appendLine("\nCommand finished.");
-				this.channel.show(true);
-				resolve(result);
-			});
+				this.channel.appendLine( "\nCommand finished." );
+				this.channel.show( true );
+				resolve( result );
+			} );
 		});
 	}
 
@@ -101,32 +101,35 @@ export class Serverless {
 		const serverlessCommand = `Running "serverless ${command} ${_.join(options, " ")}"`;
 		this.channel.appendLine(serverlessCommand);
 
-		return new Promise((resolve, reject) => {
+		return new Promise( ( resolve, reject ) => {
 			const sls = spawn( "node", _.concat(
 				[ `${nodeModulesPath}/serverless/bin/serverless` ],
-				_.split(command, " "),
+				_.split( command, " " ),
 				options,
 			), {
-				cwd: this.cwd,
-			});
+					cwd: this.cwd,
+				} );
 
-			sls.on("error", err => {
-				reject(err);
-			});
+			sls.on( "error", err => {
+				reject( err );
+			} );
 
-			sls.stdout.on("data", data => {
-				this.channel.append(data.toString());
-			});
+			sls.stdout.on( "data", data => {
+				this.channel.append( data.toString() );
+			} );
 
-			sls.stderr.on("data", data => {
-				this.channel.append(data.toString());
-			});
+			sls.stderr.on( "data", data => {
+				this.channel.append( data.toString() );
+			} );
 
-			sls.on("exit", code => {
-				this.channel.appendLine("\nCommand finished.");
-				this.channel.show(true);
+			sls.on( "exit", code => {
+				if ( code !== 0 ) {
+					reject( new Error( `Command exited with ${code}` ) );
+				}
+				this.channel.appendLine( "\nCommand finished." );
+				this.channel.show( true );
 				resolve();
-			});
+			} );
 		});
 	}
 

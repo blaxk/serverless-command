@@ -2,7 +2,7 @@
 	"name": "serverless-command",
 	"description": "serverless-vscode 를 활용하여 기능확장",
 	"icon": "images/icon.png",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
