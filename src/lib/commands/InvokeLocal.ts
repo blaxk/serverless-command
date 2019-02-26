@@ -38,12 +38,14 @@ export class InvokeLocal extends CommandBase {
 
 				const filePath = path.relative(node.documentRoot, files[0].fsPath);
 				const options = {
-					cwd: node.documentRoot,
-					function: node.name,
-					path: filePath,
-					region: result[1],
-					stage: result[ 0 ]
+					'cwd': node.documentRoot,
+					'function': node.name,
+					'path': filePath,
+					'region': result[1],
+					'stage': result[0],
+					'aws-profile': result[3]
 				};
+
 				return Serverless.invoke( "invoke local", options, result[ 2 ]);
 			});
 		});

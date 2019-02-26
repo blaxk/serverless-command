@@ -2,7 +2,7 @@
 	"name": "serverless-command",
 	"description": "serverless-vscode 를 활용하여 기능확장",
 	"icon": "images/icon.png",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
@@ -53,6 +53,16 @@
 					"type": "string",
 					"default": "/usr/local/lib/node_modules",
 					"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
+				},
+				"serverless.aws.credentials.prod": {
+					"type": "string",
+					"default": "default",
+					"description": "AWS prod credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+				},
+				"serverless.aws.credentials.dev": {
+					"type": "string",
+					"default": "default",
+					"description": "AWS dec credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
 				}
 			}
 		},

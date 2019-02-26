@@ -20,21 +20,27 @@ export class Invoke extends CommandBase {
 			return Promise.reject(new Error("Target must be a function"));
 		}
 
-		return CommandBase.askForStageAndRegion()
-		.then( result => {
-			const functionName: string = node.name
-			const filePath: string = `${node.documentRoot}/test/${functionName}.json`;
+		return new Promise( async ( resolve, reject ) => {
+			try {
+				let result = await CommandBase.askForStageAndRegion();
+				let functionName: string = node.name
+				let filePath: string = `${node.documentRoot}/test/${functionName}.json`;
+				let options = {
+					'cwd': node.documentRoot,
+					'function': functionName,
+					'region': result[1],
+					'stage': result[ 0 ],
+					'path': filePath,
+					'aws-profile': result[3],
+					'log': false
+				};
 
-			let options = {
-				cwd: node.documentRoot,
-				function: functionName,
-				region: result[ 1 ],
-				stage: result[ 0 ],
-				path: filePath,
-				log: false
-			};
-
-			return Serverless.invoke( "invoke", options, result[ 2 ] );
+				resolve(
+					Serverless.invoke( "invoke", options, result[ 2 ] )
+				);
+			} catch ( err ) {
+				reject(err)
+			}
 		});
 	}
 }

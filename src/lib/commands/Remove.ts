@@ -29,10 +29,12 @@ export class Remove extends CommandBase {
 					if ( !value ) return;
 
 					const options = {
-						cwd: node.documentRoot,
-						region: result[ 1 ],
-						stage: result[ 0 ]
+						'cwd': node.documentRoot,
+						'region': result[1],
+						'stage': result[0],
+						'aws-profile': result[3]
 					};
+
 					return Serverless.invoke( "remove", options, result[ 2 ] );
 				});
 		});

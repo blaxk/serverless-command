@@ -1,80 +1,50 @@
-## Serverless Framework integration for VS Code
-
-This extension enables an integration of Serverless projects with VSCode. It eliminates the need
-to start Serverless commands from a separate command line.
-
-## Installation
-
-In order to install an extension you need to open the extension palette and search for serverless-vscode.
-You can then install it.
-
-### Alpha version
-
-This is currently an alpha version, that integrates only a subset of possible commands.
-See the GitHub repository for remaining planned features for the final version. You're encouraged to
-test the version and create additional feature requests.
-
-**Currently the extension only supports Serverless projects with Serverless installed locally!**
-
-That means, that Serverless must be a development dependency of the project itself. A subsequent
-version of the extension will also support the globally installed Serverless framework and a
-configuration for that.
+해당 extension은 기존 serverless-vscode extension을 기반으로 재설계 되었으며,
+해당 프로젝트 개발에 최적화 되어 있어 Visual Studio Marketplace 에 등록하지 않았다.
+향후 프로젝트 특성에 맞춰 업데이트 될 계획이다.
 
 ## Configuration
 
-The extension supports user and workspace configuration. To access the configuration settings,
-open `File->Preferences->Settings` (workspace or user) and expand the `Serverless Configuration` node.
-
-The following configuration settings are available:
+`기본설정 > 설정 > Serverless Command` 로 들어가 설정한다.
 
 ### serverless.aws.defaultStage
 
-The defult stage that is assumed, if you just press ENTER in the stage input field when executing a command.
+기본 stage 설정 (default: "dev")
 
 ### serverless.aws.defaultRegion
 
-The defult region that is assumed, if you just press ENTER in the stage input field when executing a command. See also `serverless.aws.askForRegion`.
+기본 region 설정 (default: "ap-northeast-2")
 
 ### serverless.defaultNodeModulesPath
 
 node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)
 default: /usr/local/lib/node_modules
 
+### serverless.aws.credentials.prod
 
-## Usage
+prod stage credentials을 별도록 설정할때 사용
+~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")
 
-### The Serverless outline
+### serverless.aws.credentials.dev
 
-As soon as you have added a Serverless project to your workspace, you can select the `serverless.yml`
-in the Explorer tree view. Then an outline is shown in the Explorer view, that shows the parsed
-structure of your Serverless service definition.
-The outline will contain a `functions` and an `API` hive, which contain the defined functions in the
-project and the defined API endpoint hierarchy. Each item in the outline has a context menu that allows
-access to context specific commands. Most of the command will ask you for the target stage when triggered.
-
-#### Top container objects
-
-Each of the top hives has a context menu that lets you invoke service/project related functions.
-
-![Function](images/service-demo.png "Service")
+dev stage credentials을 별도록 설정할때 사용
+~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")
 
 ##### Package
 
-Package will ask for the stage and optionally region and packages the service with `serverless package`.
+`serverless package`.
+AWS에 배포가 가능한 상태로 .serverless 폴더에 해당 파일들을 packaging한다.
 
 ##### Deploy
 
-Package will ask for the stage and optionally region and deploys the service with `serverless deploy`.
+`serverless deploy`
+AWS에 어플리케이션을 배포한다.
+모든 설정이 배포되기 때문에 수분이 소요된다.
 
 ##### Variable resolution (Resolve)
 
-Resolve allows you to show a generated `resolved.yml`, i.e. your `serverless.yml` with all Serverless
-variables resolved to their values for a selected stage.
+Resolve를 사용하면 생성 된`resolved.yml ', 즉 모든 serverless 변수가 선택된 스테이지에 대한 값으로 해석 된`serverless.yml`을 볼 수 있습니다.
 
 #### Functions
-
-The functions hive lets you analyze your service function-wise and contains a node for each function.
-Each function then contains a list of all defined HTTP endpoints in the function definition.
 
 ![Function](images/function-demo.png "Function")
 
@@ -84,20 +54,23 @@ All function related commands of the extension can be called via the context men
 
 ##### Deploy function
 
-Deploys the selected function with `serverless deploy function`. Attention: In general, single function
-deployment does not replace a service deployment. See the Serverless documentation for details.
+`serverless deploy function`
+해당 함수와 관련된 파일을 AWS에 배포한다.
+배포속도가 빠르다.
 
 ##### Invoke Function
 
-함수를 호출할때 사용될 데이타를 `test/{함수명}.json` 파일을 참조하여 함수를 호출
+`serverless invoke function`
+해당 함수를 AWS Lambda 에서 호출한다.
+`test/{함수명}.json` 파일을 참조하여 호출 (해당 파일이 없으면 오류가 발생한다.)
 
 ##### Show logs
 
-Retrieve and show the online logs of the deployed function in the output pane.
+출력 창에 배포 된 기능의 온라인 로그를 검색하고 표시합니다.
 
 ##### Open handler
 
-Open the handler source file that is associated with the function.
+함수와 관련된 핸들러 소스 파일(index.js)을 엽니다.
 
 #### API
 

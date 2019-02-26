@@ -23,11 +23,13 @@ export class DeployFunction extends CommandBase {
 		return CommandBase.askForStageAndRegion()
 		.then(result => {
 			const options = {
-				cwd: node.documentRoot,
-				function: node.name,
-				region: result[1],
-				stage: result[ 0 ]
+				'cwd': node.documentRoot,
+				'function': node.name,
+				'region': result[1],
+				'stage': result[0],
+				'aws-profile': result[3]
 			};
+
 			return Serverless.invoke( "deploy function", options, result[ 2 ]);
 		});
 	}

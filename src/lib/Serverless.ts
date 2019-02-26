@@ -4,10 +4,11 @@ import * as path from "path";
 import { OutputChannel, Terminal, TerminalOptions, window, workspace } from "vscode";
 
 export interface IServerlessInvokeOptions {
-	stage?: string;
-	log?: boolean;
-	data?: string;
-	cwd?: string;
+	'stage'?: string;
+	'log'?: boolean;
+	'data'?: string;
+	'cwd'?: string;
+	"aws-profile"?: string;
 }
 
 const ProcessingOptions = [
@@ -17,7 +18,7 @@ const ProcessingOptions = [
 export class Serverless {
 
 	public static invoke ( command: string, options?: IServerlessInvokeOptions, nodeModulesPath?: string ): Thenable<void> {
-		const commandOptions = Serverless.formatOptions(options);
+		const commandOptions = Serverless.formatOptions( options );
 		const cwd: string = _.get(options, "cwd") || __dirname;
 
 		const serverless = new Serverless(cwd);
@@ -36,12 +37,13 @@ export class Serverless {
 		const options = _.defaults({}, _.omitBy(invokeOptions, (value, key) => _.includes(ProcessingOptions, key)), {
 			stage: "dev",
 		});
+
 		const commandOptions = _.map(options, (value: any, key: string) => {
 			if (value === false) {
 				return `--${key}`;
 			}
 			return `--${key}=${value}`;
-		});
+		} );
 
 		return commandOptions;
 	}
@@ -123,7 +125,7 @@ export class Serverless {
 						sls.kill( 'SIGHUP' );
 						reject();
 					});
-				}, 10000 );
+				}, 20000 );
 			}
 
 			sls.on( "error", err => {
