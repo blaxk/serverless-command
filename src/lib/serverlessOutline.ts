@@ -2,6 +2,7 @@ import * as yaml from "js-yaml";
 import * as json from "jsonc-parser";
 import * as _ from "lodash";
 import * as path from "path";
+import * as fs from "fs";
 import {
 	Command,
 	Event,
@@ -14,6 +15,7 @@ import {
 	TreeItemCollapsibleState,
 	Uri,
 	window,
+	WorkspaceFolder
 } from "vscode";
 
 import { NodeKind, ServerlessNode } from "./ServerlessNode";
@@ -29,7 +31,7 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 	private warnings: string[];
 	private nodes: ServerlessNode;
 
-	public constructor(private context: ExtensionContext) {
+	public constructor (private context: ExtensionContext, private workspaceFolders: WorkspaceFolder[]) {
 		this.warnings = [];
 		this.nodes = new ServerlessNode("Service", NodeKind.ROOT);
 
@@ -72,20 +74,21 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		} else {
 			this._onDidChangeTreeData.fire();
 		}
-	}
+	}	
 
-	private parseYaml(): void {
-		const editor: TextEditor | undefined = window.activeTextEditor;
-		const document = _.get(editor, "document");
-		const file = _.get(document, "fileName");
+	private parseYaml (): void {
+		if (this.workspaceFolders.length) {
+			const folder = this.workspaceFolders[0]//{name, uri.path}
 
-		if (document && file && _.endsWith(file, "serverless.yml")) {
-			this.nodes.children = [];
-			try {
-				const service = yaml.safeLoad(document.getText(), {});
-				this.parseService(service, document);
-			} catch (err) {
-				// console.error(err.message);
+			if (this.pathExists(folder.uri.path)) {
+				this.nodes.children = [];
+
+				try {
+					const service = yaml.safeLoad(fs.readFileSync(`${folder.uri.path}/serverless.yml`, 'utf8'), {});
+					this.parseService(service, folder.uri.path);
+				} catch (err) {
+					// console.error(err.message);
+				}
 			}
 		}
 	}
@@ -107,10 +110,9 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		}
 	}
 
-	private parseService(service: any, document: TextDocument) {
+	private parseService (service: any, documentRoot: string) {
 		const apiRootNode = new ServerlessNode("API", NodeKind.CONTAINER);
 		const functionRootNode = new ServerlessNode("Functions", NodeKind.CONTAINER);
-		const documentRoot = path.dirname(document.fileName);
 
 		// Parse functions
 		_.forOwn(service.functions, (func, funcName) => {
@@ -138,6 +140,16 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 
 		this.nodes.children.push(functionRootNode);
 		this.nodes.children.push(apiRootNode);
+	}
+
+	private pathExists (p: string): boolean {
+		try {
+			fs.accessSync(p);
+		} catch (err) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

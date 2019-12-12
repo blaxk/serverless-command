@@ -1,3 +1,6 @@
+## 1.1.0
+- Tree View를 사용하여 UI 개선
+
 ## 1.0.6
 - AWS Credentials (prod, dev) 로 다중설정할 수 있도록 설정 추가
 

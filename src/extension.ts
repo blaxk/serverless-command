@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { commands, ExtensionContext, window } from "vscode";
+import { commands, ExtensionContext, window, workspace } from "vscode";
 
 import { CommandHandler } from "./lib/CommandHandler";
 import { Deploy } from "./lib/commands/Deploy";
@@ -17,11 +17,11 @@ import { ServerlessOutlineProvider } from "./lib/serverlessOutline";
  * Activation entry point for the extension
  * @param context VSCode context
  */
-export function activate(context: ExtensionContext) {
+export function activate (context: ExtensionContext) {
 	// tslint:disable-next-line:no-console
 	console.log("Loading Serverless extension");
 
-	const serverlessOutlineProvider = new ServerlessOutlineProvider(context);
+	const serverlessOutlineProvider = new ServerlessOutlineProvider(context, workspace.workspaceFolders || []);
 	context.subscriptions.push(window.registerTreeDataProvider("serverlessOutline", serverlessOutlineProvider));
 
 	CommandHandler.registerCommand(OpenHandler, "serverless.openHandler", context);
