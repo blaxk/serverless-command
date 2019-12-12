@@ -2,16 +2,16 @@
 	"name": "serverless-command",
 	"description": "serverless-vscode 를 활용하여 기능확장",
 	"icon": "images/icon.png",
-	"version": "1.0.6",
+	"version": "1.1.0",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
-		"vscode": "^1.19.0"
+		"vscode": "^1.40.0"
 	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/HyperBrain/serverless-vscode"
+		"url": "https://github.com/blaxk/serverless-command"
 	},
 	"categories": [
 		"Other"
@@ -21,57 +21,20 @@
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Serverless Configuration",
-			"properties": {
-				"serverless.useGlobal": {
-					"type": "boolean",
-					"default": false,
-					"description": "Use global Serverless installation"
-				},
-				"serverless.slsDebug": {
-					"type": "boolean",
-					"default": false,
-					"description": "Set SLS_DEBUG for debug output"
-				},
-				"serverless.aws.defaultStage": {
-					"type": "string",
-					"default": "dev",
-					"enum": [
-						"dev",
-						"prod"
-					],
-					"description": "Default stage for builds and deployments"
-				},
-				"serverless.aws.defaultRegion": {
-					"type": "string",
-					"default": "ap-northeast-2",
-					"description": "Default region for builds and deployments"
-				},
-				"serverless.defaultNodeModulesPath": {
-					"type": "string",
-					"default": "/usr/local/lib/node_modules",
-					"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
-				},
-				"serverless.aws.credentials.prod": {
-					"type": "string",
-					"default": "default",
-					"description": "AWS prod credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
-				},
-				"serverless.aws.credentials.dev": {
-					"type": "string",
-					"default": "default",
-					"description": "AWS dec credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "serverless-explorer",
+					"title": "Serverless",
+					"icon": "images/tab-icon.svg"
 				}
-			}
+			]
 		},
 		"views": {
-			"explorer": [
+			"serverless-explorer": [
 				{
 					"id": "serverlessOutline",
-					"name": "Serverless",
-					"when": "resourceLangId == 'yaml'"
+					"name": "Functions"
 				}
 			]
 		},
@@ -175,21 +138,64 @@
 			]
 		}
 	},
+	"configuration": {
+		"type": "object",
+		"title": "Serverless Configuration",
+		"properties": {
+			"serverless.useGlobal": {
+				"type": "boolean",
+				"default": false,
+				"description": "Use global Serverless installation"
+			},
+			"serverless.slsDebug": {
+				"type": "boolean",
+				"default": false,
+				"description": "Set SLS_DEBUG for debug output"
+			},
+			"serverless.aws.defaultStage": {
+				"type": "string",
+				"default": "dev",
+				"enum": [
+					"dev",
+					"prod"
+				],
+				"description": "Default stage for builds and deployments"
+			},
+			"serverless.aws.defaultRegion": {
+				"type": "string",
+				"default": "ap-northeast-2",
+				"description": "Default region for builds and deployments"
+			},
+			"serverless.defaultNodeModulesPath": {
+				"type": "string",
+				"default": "/usr/local/lib/node_modules",
+				"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
+			},
+			"serverless.aws.credentials.prod": {
+				"type": "string",
+				"default": "default",
+				"description": "AWS prod credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+			},
+			"serverless.aws.credentials.dev": {
+				"type": "string",
+				"default": "default",
+				"description": "AWS dec credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+			}
+		}
+	},
 	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -watch -p ./",
-		"lint": "tslint \"src/**/*.ts\"",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"package": "vsce package",
-		"test": "node ./node_modules/vscode/bin/test"
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"package": "vsce package"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.10",
 		"@types/chai-as-promised": "^7.1.0",
-		"@types/js-yaml": "^3.10.1",
-		"@types/lodash": "^4.14.91",
+		"@types/js-yaml": "^3.12.1",
+		"@types/lodash": "^4.14.149",
 		"@types/mocha": "^2.2.44",
-		"@types/node": "^8.5.1",
+		"@types/node": "^12.12.17",
 		"@types/sinon": "^4.1.2",
 		"@types/sinon-chai": "^2.7.29",
 		"chai": "^4.1.2",
@@ -198,12 +204,12 @@
 		"sinon": "^4.1.3",
 		"sinon-chai": "^2.14.0",
 		"tslint": "^5.8.0",
-		"typescript": "^2.6.2",
-		"vscode": "^1.1.10"
+		"typescript": "^3.7.3",
+		"vscode": "^1.1.36"
 	},
 	"dependencies": {
-		"js-yaml": "^3.10.0",
-		"jsonc-parser": "^1.0.0",
-		"lodash": "^4.17.4"
+		"js-yaml": "^3.13.1",
+		"jsonc-parser": "^2.2.0",
+		"lodash": "^4.17.15"
 	}
 }
