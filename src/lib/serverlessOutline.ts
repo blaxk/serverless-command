@@ -15,10 +15,13 @@ import {
 	TreeItemCollapsibleState,
 	Uri,
 	window,
-	WorkspaceFolder
+	WorkspaceFolder,
+	TextDocumentChangeEvent,
+	workspace
 } from "vscode";
 
 import { NodeKind, ServerlessNode } from "./ServerlessNode";
+
 
 export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNode> {
 
@@ -42,19 +45,25 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		this.parseYaml();
 	}
 
-	public getTreeItem(element: ServerlessNode): TreeItem {
+	public getTreeItem (element: ServerlessNode): TreeItem {
 		const treeItem = new TreeItem(element.name);
 		treeItem.contextValue = element.kind;
 		if (element.hasChildren) {
 			treeItem.collapsibleState =
-				element.kind !== NodeKind.ROOT ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded;
+				element.kind !== NodeKind.ROOT ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.Collapsed;
 		} else {
 			treeItem.collapsibleState = TreeItemCollapsibleState.None;
 		}
-		// For API Methods we set the method as icon
-		if (element.kind === NodeKind.APIMETHOD && element.data) {
-			treeItem.iconPath = this.context.asAbsolutePath(`images/${_.toLower(element.data.method)}.svg`);
+
+		if (element.kind === NodeKind.CONTAINER) {
+			treeItem.iconPath = this.context.asAbsolutePath(`icons/archive.svg`);
+		} else if (element.kind === NodeKind.FUNCTION) {
+			treeItem.iconPath = this.context.asAbsolutePath(`icons/symbol-method.svg`);
 		}
+		
+		// if (element.kind === NodeKind.APIMETHOD && element.data) {
+		// 	treeItem.iconPath = this.context.asAbsolutePath(`images/${_.toLower(element.data.method)}.svg`);
+		// }
 
 		return treeItem;
 	}
@@ -67,7 +76,7 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		return element.children;
 	}
 
-	private refresh(offset?: ServerlessNode): void {
+	public refresh(offset?: ServerlessNode): void {
 		this.parseYaml();
 		if (offset) {
 			this._onDidChangeTreeData.fire(offset);
@@ -77,17 +86,18 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 	}	
 
 	private parseYaml (): void {
-		if (this.workspaceFolders.length) {
-			const folder = this.workspaceFolders[0]//{name, uri.path}
+		for (let idx in this.workspaceFolders) {
+			this.nodes.children = [];
+			//{name, uri.path}
+			const folder = this.workspaceFolders[idx];
+			const ymlPath = `${folder.uri.path}/serverless.yml`
 
-			if (this.pathExists(folder.uri.path)) {
-				this.nodes.children = [];
-
+			if (this.pathExists(ymlPath)) {
 				try {
-					const service = yaml.safeLoad(fs.readFileSync(`${folder.uri.path}/serverless.yml`, 'utf8'), {});
-					this.parseService(service, folder.uri.path);
+					const service = yaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'), {});
+					this.parseService(service, folder.uri.path, folder.name);
 				} catch (err) {
-					// console.error(err.message);
+					console.error(err);
 				}
 			}
 		}
@@ -110,28 +120,28 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		}
 	}
 
-	private parseService (service: any, documentRoot: string) {
-		const apiRootNode = new ServerlessNode("API", NodeKind.CONTAINER);
-		const functionRootNode = new ServerlessNode("Functions", NodeKind.CONTAINER);
+	private parseService (service: any, documentRoot: string, serviceName: string) {
+		//const apiRootNode = new ServerlessNode("API", NodeKind.CONTAINER);
+		const functionRootNode = new ServerlessNode(serviceName, NodeKind.CONTAINER);
 
 		// Parse functions
 		_.forOwn(service.functions, (func, funcName) => {
 			const functionNode = new ServerlessNode(funcName, NodeKind.FUNCTION, func);
 
-			// Add nodes for the function events
-			if (!_.isEmpty(func.events)) {
-				const httpEvents = _.filter(func.events, funcEvent => funcEvent.http);
-				if (!_.isEmpty(httpEvents)) {
-					const httpNode = new ServerlessNode("HTTP", NodeKind.CONTAINER);
-					_.forEach(httpEvents, ({ http }) => {
-						const name = http.path;
-						const httpMethodNode = new ServerlessNode(name, NodeKind.APIMETHOD, http);
-						httpNode.children.push(httpMethodNode);
-						this.addAPINode(apiRootNode, httpMethodNode);
-					});
-					functionNode.children.push(httpNode);
-				}
-			}
+			//Add nodes for the function events
+			// if (!_.isEmpty(func.events)) {
+			// 	const httpEvents = _.filter(func.events, funcEvent => funcEvent.http);
+			// 	if (!_.isEmpty(httpEvents)) {
+			// 		//const httpNode = new ServerlessNode("HTTP", NodeKind.CONTAINER);
+			// 		_.forEach(httpEvents, ({ http }) => {
+			// 			const name = http.path;
+			// 			const httpMethodNode = new ServerlessNode(name, NodeKind.APIMETHOD, http);
+			// 			httpNode.children.push(httpMethodNode);
+			// 			this.addAPINode(apiRootNode, httpMethodNode);
+			// 		});
+			// 		//functionNode.children.push(httpNode);
+			// 	}
+			// }
 
 			functionRootNode.children.push(functionNode);
 		});
@@ -139,15 +149,22 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		functionRootNode.setDocumentRoot(documentRoot);
 
 		this.nodes.children.push(functionRootNode);
-		this.nodes.children.push(apiRootNode);
+		//this.nodes.children.push(apiRootNode);
 	}
 
-	private pathExists (p: string): boolean {
+	private pathExists (path: string): boolean {
 		try {
-			fs.accessSync(p);
+			fs.accessSync(path);
 		} catch (err) {
 			return false;
 		}
+
+		return true;
+	}
+
+	//TODO: 하위 폴더까지 뒤져서 파일을 있는지 검사
+	private subFolderFileExists (path: string): boolean {
+		
 
 		return true;
 	}

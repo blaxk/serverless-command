@@ -16,6 +16,7 @@ export class ServerlessNode {
 	public kind: NodeKind;
 	public documentRoot: string;
 	public data?: any;
+	public iconPath?: string;
 
 	public constructor(name: string, kind: NodeKind, data?: object) {
 		this.children = [];
@@ -23,6 +24,7 @@ export class ServerlessNode {
 		this.kind = kind;
 		this.documentRoot = "";
 		this.data = data;
+		this.iconPath = "";
 	}
 
 	public get hasChildren(): boolean {

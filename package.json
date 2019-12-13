@@ -25,7 +25,7 @@
 			"activitybar": [
 				{
 					"id": "serverless-explorer",
-					"title": "Serverless",
+					"title": "Serverless-command",
 					"icon": "images/tab-icon.svg"
 				}
 			]
@@ -34,11 +34,20 @@
 			"serverless-explorer": [
 				{
 					"id": "serverlessOutline",
-					"name": "command"
+					"name": "services"
+				},
+				{
+					"id": "serverlessApiOutline",
+					"name": "apis"
 				}
 			]
 		},
 		"commands": [
+			{
+				"command": "serverless.refreshTreeHandler",
+				"title": "Refresh tree",
+				"icon": "icons/refresh.svg"
+			},
 			{
 				"command": "serverless.package",
 				"title": "Package service",
@@ -47,12 +56,14 @@
 			{
 				"command": "serverless.deploy",
 				"title": "Deploy service",
-				"category": "Serverless"
+				"category": "Serverless",
+				"icon": "icons/cloud-upload.svg"
 			},
 			{
 				"command": "serverless.remove",
 				"title": "Remove service",
-				"category": "Serverless"
+				"category": "Serverless",
+				"icon": "icons/trash.svg"
 			},
 			{
 				"command": "serverless.openHandler",
@@ -72,15 +83,29 @@
 			{
 				"command": "serverless.deployFunction",
 				"title": "Deploy function",
-				"category": "Serverless"
+				"category": "Serverless",
+				"icon": "icons/function-upload.svg"
 			},
 			{
 				"command": "serverless.invoke",
 				"title": "Invoke function",
+				"category": "Serverless",
+				"icon": "icons/play.svg"
+			},
+			{
+				"command": "serverless.invokeLocal",
+				"title": "Invoke local",
 				"category": "Serverless"
 			}
 		],
 		"menus": {
+			"view/title": [
+				{
+					"command": "serverless.refreshTreeHandler",
+					"when": "view == serverlessOutline",
+					"group": "navigation"
+				}
+			],
 			"view/item/context": [
 				{
 					"command": "serverless.resolve",
@@ -95,12 +120,17 @@
 				{
 					"command": "serverless.deploy",
 					"when": "viewItem == container",
-					"group": "Serverless@1"
+					"group": "Serverless@2"
 				},
 				{
 					"command": "serverless.remove",
 					"when": "viewItem == container",
-					"group": "Serverless@1"
+					"group": "Serverless@2"
+				},
+				{
+					"command": "serverless.deploy",
+					"when": "viewItem == container",
+					"group": "inline"
 				},
 				{
 					"command": "serverless.openHandler",
@@ -117,6 +147,20 @@
 				{
 					"command": "serverless.invoke",
 					"when": "viewItem == function"
+				},
+				{
+					"command": "serverless.invokeLocal",
+					"when": "viewItem == function"
+				},
+				{
+					"command": "serverless.deployFunction",
+					"when": "viewItem == function",
+					"group": "inline"
+				},
+				{
+					"command": "serverless.invoke",
+					"when": "viewItem == function",
+					"group": "inline"
 				}
 			],
 			"explorer/context": [
@@ -167,15 +211,10 @@
 				"default": "/usr/local/lib/node_modules",
 				"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
 			},
-			"serverless.aws.credentials.prod": {
+			"serverless.aws.credentials": {
 				"type": "string",
 				"default": "default",
-				"description": "AWS prod credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
-			},
-			"serverless.aws.credentials.dev": {
-				"type": "string",
-				"default": "default",
-				"description": "AWS dec credentials name 을 별도로 설정이 필요시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+				"description": "AWS credentials 별칭을 별도로 설정시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
 			}
 		}
 	},

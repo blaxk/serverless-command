@@ -20,34 +20,27 @@ export class InvokeLocal extends CommandBase {
 			return Promise.reject(new Error("Target must be a function"));
 		}
 
-		return CommandBase.askForStageAndRegion()
-		.then(result => {
-			return window.showOpenDialog({
-				canSelectFiles: true,
-				canSelectFolders: false,
-				canSelectMany: false,
-				filters: {
-					"Event JSON": [ "json" ],
-				},
-				openLabel: "Select event",
-			})
-			.then((files: Uri[] | undefined) => {
-				if (!files || _.isEmpty(files)) {
-					return Promise.resolve();
-				}
-
-				const filePath = path.relative(node.documentRoot, files[0].fsPath);
-				const options = {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let result = await CommandBase.askForStageAndRegion();
+				let functionName: string = node.name
+				let filePath: string = `${node.documentRoot}/test/${functionName}.json`;
+				let options = {
 					'cwd': node.documentRoot,
-					'function': node.name,
-					'path': filePath,
+					'function': functionName,
 					'region': result[1],
 					'stage': result[0],
-					'aws-profile': result[3]
+					'path': filePath,
+					'aws-profile': result[3],
+					'log': true
 				};
 
-				return Serverless.invoke( "invoke local", options, result[ 2 ]);
-			});
+				resolve(
+					Serverless.invoke("invokeLocal", options, result[2])
+				);
+			} catch (err) {
+				reject(err)
+			}
 		});
 	}
 }

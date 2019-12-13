@@ -24,6 +24,8 @@ export function activate (context: ExtensionContext) {
 	const serverlessOutlineProvider = new ServerlessOutlineProvider(context, workspace.workspaceFolders || []);
 	context.subscriptions.push(window.registerTreeDataProvider("serverlessOutline", serverlessOutlineProvider));
 
+	commands.registerCommand("serverless.refreshTreeHandler", () => serverlessOutlineProvider.refresh());
+
 	CommandHandler.registerCommand(OpenHandler, "serverless.openHandler", context);
 	CommandHandler.registerCommand(Resolve, "serverless.resolve", context);
 	CommandHandler.registerCommand(Logs, "serverless.logs", context);

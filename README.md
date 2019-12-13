@@ -19,22 +19,18 @@
 node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)
 default: /usr/local/lib/node_modules
 
-### serverless.aws.credentials.prod
+### serverless.aws.credentials
 
-prod stage credentials을 별도록 설정할때 사용
+AWS credentials 별칭을 별도로 설정시 사용
 ~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")
 
-### serverless.aws.credentials.dev
 
-dev stage credentials을 별도록 설정할때 사용
-~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")
-
-##### Package
+##### Package service
 
 `serverless package`.
 AWS에 배포가 가능한 상태로 .serverless 폴더에 해당 파일들을 packaging한다.
 
-##### Deploy
+##### Deploy service
 
 `serverless deploy`
 AWS에 어플리케이션을 배포한다.
@@ -43,14 +39,6 @@ AWS에 어플리케이션을 배포한다.
 ##### Variable resolution (Resolve)
 
 Resolve를 사용하면 생성 된`resolved.yml ', 즉 모든 serverless 변수가 선택된 스테이지에 대한 값으로 해석 된`serverless.yml`을 볼 수 있습니다.
-
-#### Functions
-
-![Function](images/function-demo.png "Function")
-
-All function related commands of the extension can be called via the context menu of the function.
-
-![FunctionContext](images/function-context.png "Function context menu")
 
 ##### Deploy function
 
@@ -72,10 +60,4 @@ All function related commands of the extension can be called via the context men
 
 함수와 관련된 핸들러 소스 파일(index.js)을 엽니다.
 
-#### API
 
-The API hive shows the combined API that will eventually be deployed to API Gateway.
-
-## Releases
-
-See the CHANGELOG.md file.
