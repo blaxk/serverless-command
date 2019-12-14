@@ -11,11 +11,7 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 &nbsp;
 
-![TreeView](images/tree-view.png "Tree view")
-
-![ServiceContext](images/service-context.png "Service context menu")
-
-![FunctionContext](images/function-context.png "Function context menu")
+![TreeView](images/serverless-command.png "Tree view")
 
 &nbsp;
 
