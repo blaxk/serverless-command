@@ -190,24 +190,24 @@
 		},
 		"configuration": {
 			"type": "object",
-			"title": "Serverless Configuration",
+			"title": "Serverless Command",
 			"properties": {
-				"serverless.aws.defaultStage": {
+				"serverless-command.aws.defaultStage": {
 					"type": "string",
 					"default": "dev",
 					"description": "Default stage for builds and deployments"
 				},
-				"serverless.aws.defaultRegion": {
+				"serverless-command.aws.defaultRegion": {
 					"type": "string",
 					"default": "ap-northeast-2",
 					"description": "Default region for builds and deployments"
 				},
-				"serverless.defaultNodeModulesPath": {
+				"serverless-command.defaultNodeModulesPath": {
 					"type": "string",
 					"default": "/usr/local/lib/node_modules",
 					"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
 				},
-				"serverless.aws.credentials": {
+				"serverless-command.aws.credentials": {
 					"type": "string",
 					"default": "default",
 					"description": "AWS credentials 별칭을 별도로 설정시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
