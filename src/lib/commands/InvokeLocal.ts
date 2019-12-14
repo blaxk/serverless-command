@@ -36,7 +36,7 @@ export class InvokeLocal extends CommandBase {
 				};
 
 				resolve(
-					Serverless.invoke("invokeLocal", options, result[2])
+					Serverless.invoke("invoke local", options, result[2])
 				);
 			} catch (err) {
 				reject(err)

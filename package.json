@@ -1,20 +1,27 @@
 {
 	"name": "serverless-command",
+	"displayName": "Serverless command",
 	"description": "serverless-vscode 를 활용하여 기능확장",
 	"icon": "images/icon.png",
 	"version": "1.1.0",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
-		"vscode": "^1.40.0"
+		"vscode": "^1.31.0"
 	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/blaxk/serverless-command"
 	},
+	"bugs": {
+		"url": "https://github.com/blaxk/serverless-command/issues"
+	},
 	"categories": [
 		"Other"
+	],
+	"keywords": [
+		"serverless"
 	],
 	"activationEvents": [
 		"onView:serverlessOutline"
@@ -186,16 +193,6 @@
 		"type": "object",
 		"title": "Serverless Configuration",
 		"properties": {
-			"serverless.useGlobal": {
-				"type": "boolean",
-				"default": false,
-				"description": "Use global Serverless installation"
-			},
-			"serverless.slsDebug": {
-				"type": "boolean",
-				"default": false,
-				"description": "Set SLS_DEBUG for debug output"
-			},
 			"serverless.aws.defaultStage": {
 				"type": "string",
 				"default": "dev",
@@ -233,7 +230,7 @@
 		"@types/node": "^12.12.17",
 		"@types/sinon": "^4.1.2",
 		"@types/sinon-chai": "^2.7.29",
-		"@types/vscode": "^1.40.0",
+		"@types/vscode": "^1.31.0",
 		"chai": "^4.1.2",
 		"chai-as-promised": "^7.1.1",
 		"mocha": "^4.0.1",

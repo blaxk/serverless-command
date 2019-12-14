@@ -12,7 +12,7 @@ export abstract class CommandBase {
 		const defaultStage: string = configuration.get("serverless.aws.defaultStage") || "dev";
 		const defaultRegion: string = configuration.get("serverless.aws.defaultRegion") || "ap-northeast-2";
 		const defaultNodeModulesPath: string = configuration.get("serverless.defaultNodeModulesPath") || "/usr/local/lib/node_modules";
-		const credentialName: string = configuration.get( `serverless.aws.credentials.${defaultStage}`) || "default";
+		const credentialName: string = configuration.get("serverless.aws.credentials") || "default";
 
 		return Promise.resolve( [ defaultStage, defaultRegion, defaultNodeModulesPath, credentialName ]);
 	}

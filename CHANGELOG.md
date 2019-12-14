@@ -2,7 +2,7 @@
 - Tree View를 사용하여 UI 개선
 
 ## 1.0.6
-- AWS Credentials (prod, dev) 로 다중설정할 수 있도록 설정 추가
+- AWS Credentials 변경 설정 추가
 
 ## 1.0.5
 - Invoke function 옵션 추가
