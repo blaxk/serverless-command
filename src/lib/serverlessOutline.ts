@@ -9,7 +9,8 @@ import {
 	TreeItem,
 	TreeItemCollapsibleState,
 	window,
-	WorkspaceFolder
+	WorkspaceFolder,
+	workspace
 } from "vscode";
 
 import { NodeKind, ServerlessNode } from "./ServerlessNode";
@@ -32,6 +33,12 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 
 		window.onDidChangeActiveTextEditor(editor => {
 			this.refresh();
+		});
+
+		workspace.onDidSaveTextDocument(document => {
+			if (/serverless.yml$/.test(document.fileName)) {
+				this.refresh();
+			}
 		});
 
 		this.parseYaml();
