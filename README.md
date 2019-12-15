@@ -1,9 +1,9 @@
 
 ## Serverless Framework for VSCode
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
+[![Version](https://vsmarketplacebadge.apphb.com/version/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
 
 Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령줄이 아닌, Context Menu를 이용하여 직관적이며 편리하게 이용할수 있다.
 
@@ -11,7 +11,7 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 &nbsp;
 
-![TreeView](images/serverless-command.gif "Tree view")
+![TreeView](images/serverlessCommand.gif "Tree view")
 
 &nbsp;
 
@@ -19,20 +19,20 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 `기본설정 > 설정 > Serverless Command` 로 들어가 설정한다.
 
-### serverless-command.aws.defaultStage
+### serverlessCommand.aws.stage
 
 기본 stage 설정 (default: "dev")
 
-### serverless-command.aws.defaultRegion
+### serverlessCommand.aws.region
 
 기본 region 설정 (default: "ap-northeast-2")
 
-### serverless-command.defaultNodeModulesPath
+### serverlessCommand.nodeModulesPath
 
 node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)
 default: /usr/local/lib/node_modules
 
-### serverless-command.aws.credentials
+### serverlessCommand.aws.credentials
 
 AWS credentials 별칭을 별도로 설정시 사용
 ~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")

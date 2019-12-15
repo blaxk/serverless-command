@@ -1,9 +1,9 @@
 {
-	"name": "serverless-command",
+	"name": "serverlessCommand",
 	"displayName": "Serverless command",
 	"description": "Serverless Framework을 TreeView를 이용하여 직관적이며 편리하게 실행할 수 있습니다.",
 	"icon": "images/icon.png",
-	"version": "1.1.5",
+	"version": "1.1.6",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
@@ -12,10 +12,10 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/blaxk/serverless-command"
+		"url": "https://github.com/blaxk/serverlessCommand"
 	},
 	"bugs": {
-		"url": "https://github.com/blaxk/serverless-command/issues"
+		"url": "https://github.com/blaxk/serverlessCommand/issues"
 	},
 	"categories": [
 		"Other"
@@ -192,22 +192,22 @@
 			"type": "object",
 			"title": "Serverless Command",
 			"properties": {
-				"serverless-command.aws.defaultStage": {
+				"serverlessCommand.aws.stage": {
 					"type": "string",
 					"default": "dev",
 					"description": "Default stage for builds and deployments"
 				},
-				"serverless-command.aws.defaultRegion": {
+				"serverlessCommand.aws.region": {
 					"type": "string",
 					"default": "ap-northeast-2",
 					"description": "Default region for builds and deployments"
 				},
-				"serverless-command.defaultNodeModulesPath": {
+				"serverlessCommand.nodeModulesPath": {
 					"type": "string",
 					"default": "/usr/local/lib/node_modules",
 					"description": "node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)"
 				},
-				"serverless-command.aws.credentials": {
+				"serverlessCommand.aws.credentials": {
 					"type": "string",
 					"default": "default",
 					"description": "AWS credentials 별칭을 별도로 설정시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
