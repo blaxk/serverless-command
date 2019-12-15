@@ -242,6 +242,6 @@
 	"dependencies": {
 		"js-yaml": "^3.13.1",
 		"jsonc-parser": "^2.2.0",
-		"lodash": "^4.17.15"
+		"lodash": "^4.14.149"
 	}
 }
