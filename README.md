@@ -1,9 +1,9 @@
 
 ## Serverless Framework for VSCode
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverlessCommand.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverlessCommand)
+[![Version](https://vsmarketplacebadge.apphb.com/version/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 
 Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령줄이 아닌, Context Menu를 이용하여 직관적이며 편리하게 이용할수 있다.
 
@@ -11,7 +11,7 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 &nbsp;
 
-![TreeView](images/serverlessCommand.gif "Tree view")
+![TreeView](images/serverless-command.gif "Tree view")
 
 &nbsp;
 
