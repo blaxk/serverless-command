@@ -17,7 +17,7 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 ## Configuration
 
-`기본설정 > 설정 > Serverless Command` 로 들어가 설정한다.
+`기본설정 > 설정 > Serverless Command` 로 들어가 설정한다.  
 
 ### serverlessCommand.aws.stage
 
@@ -29,8 +29,9 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령�
 
 ### serverlessCommand.nodeModulesPath
 
-node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)
-default: /usr/local/lib/node_modules
+node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)   
+default: "/usr/local/lib/node_modules"   
+> ${nodeModulesPath}/serverless/bin/ 에 설치되어 있는 (global) serverless에 접근한다.   
 
 ### serverlessCommand.aws.credentials
 

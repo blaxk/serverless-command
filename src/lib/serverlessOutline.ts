@@ -81,8 +81,9 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 	}	
 
 	private parseYaml (): void {
+		this.nodes.children = [];
+
 		for (let idx in this.workspaceFolders) {
-			this.nodes.children = [];
 			//{name, uri.path}
 			const folder = this.workspaceFolders[idx];
 			const ymlPath = `${folder.uri.path}/serverless.yml`

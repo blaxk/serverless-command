@@ -1,5 +1,8 @@
+## 1.2.0
+- TreeView 에서 다중 service 보여지도록 수정
+
 ## 1.1.5
-- Tree View를 사용하여 UI 개선
+- TreeView를 사용하여 UI 개선
 
 ## 1.0.6
 - AWS Credentials 변경 설정 추가
