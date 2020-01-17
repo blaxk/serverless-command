@@ -5,7 +5,7 @@
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 
-Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, 명령줄이 아닌, Context Menu를 이용하여 직관적이며 편리하게 이용할수 있다.
+Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, Context Menu를 이용하여 직관적이며 편리하게 관리할 수 있다.
 
 ※ 해당 extension은 기존 `serverless-vscode` extension을 기반으로 재설계 되었다.
 
@@ -35,8 +35,13 @@ default: "/usr/local/lib/node_modules"
 
 ### serverlessCommand.aws.credentials
 
-AWS credentials 별칭을 별도로 설정시 사용
-~/.aws/credentials 파일의 등록되어 있는 정보 (default: "default")
+AWS credentials profile 별칭을 별도로 설정시 사용   
+~/.aws/credentials 파일의 등록되어 있는 별칭 (default: "")
+
+### serverlessCommand.alias
+
+Lambda 함수에서 AWS 별칭을 사용할 수 있도록 설정한다. (default: "")   
+> serverless-aws-alias plugin 참고
 
 &nbsp;
 

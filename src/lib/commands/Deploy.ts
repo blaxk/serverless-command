@@ -26,7 +26,8 @@ export class Deploy extends CommandBase {
 				'cwd': node.documentRoot,
 				'region': result[1],
 				'stage': result[0],
-				'aws-profile': result[3]
+				'aws-profile': result[3],
+				'alias': result[4]
 			};
 
 			return Serverless.invoke( "deploy", options, result[ 2 ]);

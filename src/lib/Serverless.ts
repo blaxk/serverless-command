@@ -8,18 +8,19 @@ export interface IServerlessInvokeOptions {
 	'log'?: boolean;
 	'data'?: string;
 	'cwd'?: string;
-	"aws-profile"?: string;
+	'aws-profile'?: string;
+	'alias'?: string;
 }
 
 const ProcessingOptions = [
-	"cwd",
+	'cwd',
 ];
 
 export class Serverless {
 
 	public static invoke ( command: string, options?: IServerlessInvokeOptions, nodeModulesPath?: string ): Thenable<void> {
 		const commandOptions = Serverless.formatOptions( options );
-		const cwd: string = _.get(options, "cwd") || __dirname;
+		const cwd: string = _.get(options, 'cwd') || __dirname;
 
 		const serverless = new Serverless(cwd);
 		return serverless.invokeCommand( command, commandOptions, nodeModulesPath);
@@ -27,7 +28,7 @@ export class Serverless {
 
 	public static invokeWithResult ( command: string, options?: IServerlessInvokeOptions, nodeModulesPath?: string): Thenable<string> {
 		const commandOptions = Serverless.formatOptions(options);
-		const cwd: string = _.get(options, "cwd") || __dirname;
+		const cwd: string = _.get(options, 'cwd') || __dirname;
 
 		const serverless = new Serverless(cwd);
 		return serverless.invokeCommandWithResult( command, commandOptions, nodeModulesPath);
@@ -35,15 +36,20 @@ export class Serverless {
 
 	private static formatOptions(invokeOptions?: IServerlessInvokeOptions): string[] {
 		const options = _.defaults({}, _.omitBy(invokeOptions, (value, key) => _.includes(ProcessingOptions, key)), {
-			stage: "dev",
+			stage: 'dev',
 		});
+		
+		let commandOptions: string[] = []
 
-		const commandOptions = _.map(options, (value: any, key: string) => {
-			if (value === false) {
-				return `--${key}`;
+		_.forEach(options, (value: any, key: string) => {
+			if (key && value) {
+				commandOptions.push(`--${key}=${value}`);
+			} else if (key && value === false) {
+				commandOptions.push(`--${key}`);
 			}
-			return `--${key}=${value}`;
-		} );
+		});
+		
+		window.showInformationMessage(`-commandOptions:: ${JSON.stringify(commandOptions)}`)
 
 		return commandOptions;
 	}
@@ -117,9 +123,9 @@ export class Serverless {
 			// 특정 오류에서 아무 이벤트도 받지 못하는 이슈때문에 사용 (20초 Timeout)
 			if ( /invoke/.test( command ) ) {
 				this.timer = setTimeout( () => {
-					window.showErrorMessage( 'Serverless 응답이 지연되고 있습니다. Serverless 프로세스를 중지 하시겠습니까?',
+					window.showErrorMessage( 'Serverless response is delayed.\n Do you want to stop the serverless process?',
 						{},
-						{ title: 'Serverless 중지' }
+						{ title: 'Serverless STOP' }
 					).then( value => {
 						if ( !value ) return;
 						sls.kill( 'SIGHUP' );

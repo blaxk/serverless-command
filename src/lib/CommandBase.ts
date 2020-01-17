@@ -12,9 +12,10 @@ export abstract class CommandBase {
 		const defaultStage: string = configuration.get("serverlessCommand.aws.stage") || "dev";
 		const defaultRegion: string = configuration.get("serverlessCommand.aws.region") || "ap-northeast-2";
 		const defaultNodeModulesPath: string = configuration.get("serverlessCommand.nodeModulesPath") || "/usr/local/lib/node_modules";
-		const credentialName: string = configuration.get("serverlessCommand.aws.credentials") || "default";
+		const credentialName: string = configuration.get("serverlessCommand.aws.credentials") || "";
+		const alias: string = configuration.get("serverlessCommand.aws.alias") || "";
 
-		return Promise.resolve( [ defaultStage, defaultRegion, defaultNodeModulesPath, credentialName ]);
+		return Promise.resolve([defaultStage, defaultRegion, defaultNodeModulesPath, credentialName, alias]);
 	}
 
 	constructor(public readonly isExclusive: boolean = false) {

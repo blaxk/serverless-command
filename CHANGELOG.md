@@ -1,3 +1,7 @@
+## 1.3.0
+- AWS Credentials profile 설정하지 않으면 --aws-profile 옵션 들어가지 안도록 수정, 기본값=""
+- Lambda 별칭을 사용할 수 있도록 설정 추가
+
 ## 1.2.0
 - TreeView 에서 다중 service 보여지도록 수정
 

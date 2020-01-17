@@ -29,9 +29,10 @@ export class Invoke extends CommandBase {
 					'cwd': node.documentRoot,
 					'function': functionName,
 					'region': result[1],
-					'stage': result[ 0 ],
+					'stage': result[0],
 					'path': filePath,
 					'aws-profile': result[3],
+					'alias': result[4],
 					'log': false
 				};
 

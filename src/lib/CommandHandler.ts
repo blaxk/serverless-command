@@ -32,12 +32,12 @@ export class CommandHandler<T extends CommandBase> {
 		const isExclusive = this.handler.isExclusive;
 		if (isExclusive) {
 			if (CommandHandler.isCommandRunning) {
-				return window.showErrorMessage("Serverless: 다른 명령이 아직 진행 중입니다.")
+				return window.showErrorMessage("Serverless: process is running!")
 				.then(_.noop);
 			}
 			CommandHandler.isCommandRunning = true;
 		}
-
+		
 		return this.handler.invoke(node)
 		.then(() => {
 			if (isExclusive) {

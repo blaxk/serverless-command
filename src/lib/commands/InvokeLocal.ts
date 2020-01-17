@@ -32,6 +32,7 @@ export class InvokeLocal extends CommandBase {
 					'stage': result[0],
 					'path': filePath,
 					'aws-profile': result[3],
+					'alias': result[4],
 					'log': true
 				};
 

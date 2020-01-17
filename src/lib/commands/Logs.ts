@@ -27,7 +27,8 @@ export class Logs extends CommandBase {
 				'function': node.name,
 				'region': result[1],
 				'stage': result[0],
-				'aws-profile': result[3]
+				'aws-profile': result[3],
+				'alias': result[4]
 			};
 
 			return Serverless.invoke( "logs", options, result[2]);

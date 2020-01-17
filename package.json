@@ -3,7 +3,7 @@
 	"displayName": "Serverless command",
 	"description": "Serverless Framework을 TreeView를 이용하여 직관적이며 편리하게 실행할 수 있습니다.",
 	"icon": "images/icon.png",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
@@ -21,7 +21,9 @@
 		"Other"
 	],
 	"keywords": [
-		"serverless"
+		"serverless",
+		"aws",
+		"lambda"
 	],
 	"activationEvents": [
 		"onView:serverlessOutline"
@@ -209,8 +211,13 @@
 				},
 				"serverlessCommand.aws.credentials": {
 					"type": "string",
-					"default": "default",
-					"description": "AWS credentials 별칭을 별도로 설정시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+					"default": "",
+					"description": "AWS credentials profile 별칭을 별도로 설정시 사용 (~/.aws/credentials 파일의 등록되어 있는 정보)"
+				},
+				"serverlessCommand.aws.alias": {
+					"type": "string",
+					"default": "",
+					"description": "Lambda 함수에서 alias를 사용할 수 있도록 설정한다."
 				}
 			}
 		}
