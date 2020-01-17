@@ -38,7 +38,7 @@ default: "/usr/local/lib/node_modules"
 AWS credentials profile 별칭을 별도로 설정시 사용   
 ~/.aws/credentials 파일의 등록되어 있는 별칭 (default: "")
 
-### serverlessCommand.alias
+### serverlessCommand.aws.alias
 
 Lambda 함수에서 AWS 별칭을 사용할 수 있도록 설정한다. (default: "")   
 > serverless-aws-alias plugin 참고
