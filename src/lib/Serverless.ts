@@ -48,8 +48,6 @@ export class Serverless {
 				commandOptions.push(`--${key}`);
 			}
 		});
-		
-		window.showInformationMessage(`-commandOptions:: ${JSON.stringify(commandOptions)}`)
 
 		return commandOptions;
 	}
