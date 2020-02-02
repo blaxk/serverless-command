@@ -55,7 +55,7 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		}
 
 		if (element.kind === NodeKind.CONTAINER) {
-			treeItem.iconPath = this.context.asAbsolutePath(`icons/archive.svg`);
+			treeItem.iconPath = this.context.asAbsolutePath(`icons/package.svg`);
 		} else if (element.kind === NodeKind.FUNCTION) {
 			treeItem.iconPath = this.context.asAbsolutePath(`icons/symbol-method.svg`);
 		}

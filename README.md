@@ -11,7 +11,13 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, Context 
 
 &nbsp;
 
-![TreeView](images/serverless-command.gif "Tree view")
+### Single Project
+![Single Project](images/exsample1.gif "Single Project")
+
+&nbsp;
+
+### Multiple Project
+![Multiple Project](images/exsample2.gif "Multiple Project")
 
 &nbsp;
 
