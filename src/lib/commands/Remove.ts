@@ -28,14 +28,6 @@ export class Remove extends CommandBase {
 				).then( value => {
 					if ( !value ) return;
 
-					// const options = {
-					// 	'cwd': node.documentRoot,
-					// 	'region': result[1],
-					// 	'stage': result[0],
-					// 	'aws-profile': result[3],
-					// 	'alias': result[4]
-					// };
-
 					return Serverless.invoke('remove', {
 						'cwd': node.documentRoot,
 						...result
