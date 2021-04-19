@@ -1,12 +1,12 @@
-import * as _ from "lodash";
-import { Command, ExtensionContext } from "vscode";
+import * as _ from 'lodash';
+import { Command, ExtensionContext } from 'vscode';
 
 export const enum NodeKind {
-	ROOT = "root",
-	CONTAINER = "container",
-	FUNCTION = "function",
-	APIPATH = "apipath",
-	APIMETHOD = "apimethod",
+	ROOT = 'root',
+	CONTAINER = 'container',
+	FUNCTION = 'function',
+	APIPATH = 'apipath',
+	APIMETHOD = 'apimethod',
 }
 
 export class ServerlessNode {
@@ -18,13 +18,13 @@ export class ServerlessNode {
 	public data?: any;
 	public iconPath?: string;
 
-	public constructor(name: string, kind: NodeKind, data?: object) {
+	public constructor (name: string, kind: NodeKind, data?: object) {
 		this.children = [];
 		this.name = name;
 		this.kind = kind;
-		this.documentRoot = "";
+		this.documentRoot = '';
 		this.data = data;
-		this.iconPath = "";
+		this.iconPath = '';
 	}
 
 	public get hasChildren(): boolean {
@@ -32,9 +32,9 @@ export class ServerlessNode {
 	}
 
 	public getCommand(): Command | null {
-		switch (this.kind) {
+		// switch (this.kind) {
 
-		}
+		// }
 		return null;
 	}
 

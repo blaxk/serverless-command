@@ -1,9 +1,9 @@
-import * as _ from "lodash";
-import * as path from "path";
-import { ExtensionContext, Position, TextDocument, TextEditor, Uri, window, workspace } from "vscode";
-import { CommandBase } from "../CommandBase";
-import { Serverless } from "../Serverless";
-import { NodeKind, ServerlessNode } from "../ServerlessNode";
+import * as _ from 'lodash';
+import * as path from 'path';
+import { ExtensionContext, Position, TextDocument, TextEditor, Uri, window, workspace } from 'vscode';
+import { CommandBase } from '../CommandBase';
+import { Serverless } from '../Serverless';
+import { NodeKind, ServerlessNode } from '../ServerlessNode';
 
 /**
  * Wrapper for Serverless logs.
@@ -11,29 +11,32 @@ import { NodeKind, ServerlessNode } from "../ServerlessNode";
 
 export class Resolve extends CommandBase {
 
-	constructor(private context: ExtensionContext) {
+	constructor (private context: ExtensionContext) {
 		super(true);
 	}
 
 	public invoke(node: ServerlessNode): Thenable<void> {
 		if (node.kind !== NodeKind.CONTAINER) {
-			return Promise.reject(new Error("Target must be a container"));
+			return Promise.reject(new Error('Target must be a container'));
 		}
 
 		return CommandBase.askForStageAndRegion()
 		.then(result => {
-			const options = {
-				'cwd': node.documentRoot,
-				'region': result[1],
-				'stage': result[0],
-				'aws-profile': result[3],
-				'alias': result[4]
-			};
+			// const options = {
+			// 	'cwd': node.documentRoot,
+			// 	'region': result[1],
+			// 	'stage': result[0],
+			// 	'aws-profile': result[3],
+			// 	'alias': result[4]
+			// };
 
-			return Serverless.invokeWithResult( "print", options, result[2]);
+			return Serverless.invokeWithResult('print', {
+				'cwd': node.documentRoot,
+				...result
+			});
 		})
 		.then((resolvedYaml: string) => {
-			return workspace.openTextDocument(Uri.parse("untitled:" + path.join(node.documentRoot, "resolved.yml")))
+			return workspace.openTextDocument(Uri.parse('untitled:' + path.join(node.documentRoot, 'resolved.yml')))
 			.then((doc: TextDocument) => window.showTextDocument(doc))
 			.then((editor: TextEditor) => {
 				return editor.edit(edit => edit.insert(new Position(0, 0), resolvedYaml));

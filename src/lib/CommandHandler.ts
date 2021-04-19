@@ -1,7 +1,7 @@
-import * as _ from "lodash";
-import { commands, Disposable, ExtensionContext, window } from "vscode";
-import { CommandBase } from "./CommandBase";
-import { ServerlessNode } from "./ServerlessNode";
+import * as _ from 'lodash';
+import { commands, Disposable, ExtensionContext, window } from 'vscode';
+import { CommandBase } from './CommandBase';
+import { ServerlessNode } from './ServerlessNode';
 
 /**
  * Wrap commands that process ServerlessNode objects and
@@ -23,7 +23,7 @@ export class CommandHandler<T extends CommandBase> {
 
 	private handler: T;
 
-	private constructor(private context: ExtensionContext, handlerClass: { new (context: ExtensionContext): T; }) {
+	private constructor (private context: ExtensionContext, handlerClass: { new (context: ExtensionContext): T; }) {
 		this.handler = new handlerClass(context);
 		this.invoke = this.invoke.bind(this);
 	}
@@ -32,7 +32,7 @@ export class CommandHandler<T extends CommandBase> {
 		const isExclusive = this.handler.isExclusive;
 		if (isExclusive) {
 			if (CommandHandler.isCommandRunning) {
-				return window.showErrorMessage("Serverless: process is running!")
+				return window.showErrorMessage('Serverless: process is running!')
 				.then(_.noop);
 			}
 			CommandHandler.isCommandRunning = true;

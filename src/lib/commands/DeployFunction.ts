@@ -1,9 +1,9 @@
-import * as _ from "lodash";
-import * as path from "path";
-import { ExtensionContext, Uri, window } from "vscode";
-import { CommandBase } from "../CommandBase";
-import { Serverless } from "../Serverless";
-import { NodeKind, ServerlessNode } from "../ServerlessNode";
+import * as _ from 'lodash';
+import * as path from 'path';
+import { ExtensionContext, Uri, window } from 'vscode';
+import { CommandBase } from '../CommandBase';
+import { Serverless } from '../Serverless';
+import { NodeKind, ServerlessNode } from '../ServerlessNode';
 
 /**
  * Wrapper for Serverless deploy function.
@@ -11,27 +11,31 @@ import { NodeKind, ServerlessNode } from "../ServerlessNode";
 
 export class DeployFunction extends CommandBase {
 
-	constructor(private context: ExtensionContext) {
+	constructor (private context: ExtensionContext) {
 		super(true);
 	}
 
 	public invoke(node: ServerlessNode): Thenable<void> {
 		if (node.kind !== NodeKind.FUNCTION) {
-			return Promise.reject(new Error("Target must be a function"));
+			return Promise.reject(new Error('Target must be a function'));
 		}
 
 		return CommandBase.askForStageAndRegion()
 		.then(result => {
-			const options = {
+			// const options = {
+			// 	'cwd': node.documentRoot,
+			// 	'function': node.name,
+			// 	'region': result[1],
+			// 	'stage': result[0],
+			// 	'aws-profile': result[3],
+			// 	'alias': result[4]
+			// };
+
+			return Serverless.invoke('deploy function', {
 				'cwd': node.documentRoot,
 				'function': node.name,
-				'region': result[1],
-				'stage': result[0],
-				'aws-profile': result[3],
-				'alias': result[4]
-			};
-
-			return Serverless.invoke( "deploy function", options, result[ 2 ]);
+				...result
+			});
 		});
 	}
 

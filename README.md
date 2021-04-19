@@ -25,19 +25,18 @@ Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, Context 
 
 `기본설정 > 설정 > Serverless Command` 로 들어가 설정한다.  
 
+### serverlessCommand.firstCommand
+
+serverless 명령어 앞쪽에 추가로 설정하는 명령어 설정 (npm start &&)
+> `npm start && serveless deplay`   
+
 ### serverlessCommand.aws.stage
 
 기본 stage 설정 (default: "dev")
 
 ### serverlessCommand.aws.region
 
-기본 region 설정 (default: "ap-northeast-2")
-
-### serverlessCommand.nodeModulesPath
-
-node_modules 경로를 설정 ('npm root -g' 명령어로 확인 가능)   
-default: "/usr/local/lib/node_modules"   
-> ${nodeModulesPath}/serverless/bin/ 에 설치되어 있는 (global) serverless에 접근한다.   
+기본 region 설정 (default: "ap-northeast-2") 
 
 ### serverlessCommand.aws.credentials
 

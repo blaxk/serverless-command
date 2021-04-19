@@ -5,11 +5,6 @@
 		"outDir": "out",
 		"sourceMap": true,
 		"strict": true,
-		"types": [
-			"node",
-			"lodash",
-			"mocha"
-		],
 		"lib": [
 			"es6"
 		]

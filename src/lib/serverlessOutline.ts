@@ -1,6 +1,6 @@
-import * as yaml from "js-yaml";
-import * as _ from "lodash";
-import * as fs from "fs";
+import * as yaml from 'js-yaml';
+import * as _ from 'lodash';
+import * as fs from 'fs';
 import {
 	Event,
 	EventEmitter,
@@ -11,9 +11,9 @@ import {
 	window,
 	WorkspaceFolder,
 	workspace
-} from "vscode";
+} from 'vscode';
 
-import { NodeKind, ServerlessNode } from "./ServerlessNode";
+import { NodeKind, ServerlessNode } from './ServerlessNode';
 
 
 export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNode> {
@@ -27,9 +27,9 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 	private warnings: string[];
 	private nodes: ServerlessNode;
 
-	public constructor (private context: ExtensionContext, private workspaceFolders: WorkspaceFolder[]) {
+	public constructor (private context: ExtensionContext) {
 		this.warnings = [];
-		this.nodes = new ServerlessNode("Service", NodeKind.ROOT);
+		this.nodes = new ServerlessNode('Service', NodeKind.ROOT);
 
 		window.onDidChangeActiveTextEditor(editor => {
 			this.refresh();
@@ -76,24 +76,25 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 		if (offset) {
 			this._onDidChangeTreeData.fire(offset);
 		} else {
-			this._onDidChangeTreeData.fire();
+			this._onDidChangeTreeData.fire(null);
 		}
 	}	
 
 	private parseYaml (): void {
 		this.nodes.children = [];
 
-		for (let idx in this.workspaceFolders) {
-			//{name, uri.path}
-			const folder = this.workspaceFolders[idx];
-			const ymlPath = `${folder.uri.path}/serverless.yml`
+		if (workspace.workspaceFolders) {
+			for (const folder of workspace.workspaceFolders) {
+				//{name, uri.path}
+				const ymlPath = `${folder.uri.path}/serverless.yml`
 
-			if (this.pathExists(ymlPath)) {
-				try {
-					const service = yaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'), {});
-					this.parseService(service, folder.uri.path, folder.name);
-				} catch (err) {
-					console.error(err);
+				if (this.pathExists(ymlPath)) {
+					try {
+						const service = yaml.load(fs.readFileSync(ymlPath, 'utf8'), {});
+						this.parseService(service, folder.uri.path, folder.name);
+					} catch (err) {
+						console.error(err);
+					}
 				}
 			}
 		}
@@ -101,7 +102,7 @@ export class ServerlessOutlineProvider implements TreeDataProvider<ServerlessNod
 
 	private addAPINode(apiRoot: ServerlessNode, httpNode: ServerlessNode) {
 		const http = httpNode.data;
-		const httpPath = _.compact(_.split(http.path, "/"));
+		const httpPath = _.compact(_.split(http.path, '/'));
 		const apiLeaf = _.reduce(_.initial(httpPath), (root, httpPathElement) => {
 			let apiPath = _.find(root.children, child => child.name === httpPathElement);
 			if (!apiPath) {
