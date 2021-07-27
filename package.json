@@ -7,7 +7,7 @@
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
-		"vscode": "^1.50.0"
+		"vscode": "^1.58.1"
 	},
 	"license": "MIT",
 	"repository": {
