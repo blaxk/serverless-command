@@ -1,0 +1,62 @@
+/* ---------- main ---------- */
+.main .main-icon {
+	top: calc(50vh - 150px);
+}
+
+
+/* ---------- list ---------- */
+.content .main-icon {
+	margin-top: 40px;
+}
+
+
+/* ---------- events list ---------- */
+.content.events {
+	padding-top: 20px;
+}
+.content.events .search-area {
+	display: flex;
+	position: relative;
+	padding: 0 10px 20px 10px;
+	margin-bottom: 20px;
+}
+.content.events .search-area .form-wrap {
+	position: relative;
+	width: calc(100% - 250px);
+}
+.content.events .search-area .form-wrap input {
+	width: calc(100% - 30px);
+}
+.content.events .search-area .btn-empty {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: transparent;
+	padding: 5px 10px;
+	opacity: 0.3;
+}
+.content.events .search-area .btn-empty:hover {
+	opacity: 1;
+}
+.content.events .search-area .btn-empty .fa-icon {
+	width: 12px;
+}
+.content.events .search-area .check-wrap {
+	margin: 5px 0 0 10px;
+}
+.content.events .search-area .check-wrap label {
+	margin-left: 5px;
+}
+.content.events .search-area .result-count {
+	position: absolute;
+	right: 0;
+	padding: 5px 10px 0 0;
+	color: #505050;
+}
+
+.content.events li {
+	margin-bottom: 15px;
+}
+.content.events li pre {
+	margin-top: 5px;
+}

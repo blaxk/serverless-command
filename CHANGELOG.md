@@ -1,4 +1,8 @@
-## 1.4.0
+## 1.5.0
+- AWS CloudWatchLogs Context Menu에 추가
+- serverless.yml 파일인식 개선
+
+# 1.4.0
 - serverless 최신 버전에서 --aws-profile 옵션을 오류처리 하므로, AWS Credentials profile 설정 `export AWS_PROFILE={profile}` 으로 적용 되도록 변경
 - firstCommand 옵션추가
 - nodeModulesPath 옵션삭제

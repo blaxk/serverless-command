@@ -1,13 +1,13 @@
 {
 	"name": "serverless-command",
 	"displayName": "Serverless command",
-	"description": "Serverless Framework을 TreeView를 이용하여 직관적이며 편리하게 실행할 수 있습니다.",
-	"icon": "images/icon.png",
-	"version": "1.4.0",
+	"description": "Serverless Framework을 TreeView를 이용하여 직관적이며 편리하게 개발할 수 있도록 도와줍니다.",
+	"icon": "resources/icon.png",
+	"version": "1.5.0",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {
-		"vscode": "^1.55.0"
+		"vscode": "^1.50.0"
 	},
 	"license": "MIT",
 	"repository": {
@@ -23,19 +23,21 @@
 	"keywords": [
 		"serverless",
 		"aws",
-		"lambda"
+		"lambda",
+		"cloudwatch",
+		"cloudwatchlogs"
 	],
 	"activationEvents": [
 		"onView:serverlessOutline"
 	],
-	"main": "./out/extension.js",
+	"main": "./build/extension.js",
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
 				{
 					"id": "serverless-explorer",
 					"title": "Serverless-command",
-					"icon": "images/tab-icon.svg"
+					"icon": "resources/tab-icon.svg"
 				}
 			]
 		},
@@ -46,8 +48,8 @@
 					"name": "services"
 				},
 				{
-					"id": "serverlessApiOutline",
-					"name": "apis"
+					"id": "serverlessLogsOutline",
+					"name": "cloud watch logs"
 				}
 			]
 		},
@@ -55,7 +57,10 @@
 			{
 				"command": "serverless.refreshTreeHandler",
 				"title": "Refresh tree",
-				"icon": "icons/refresh.svg"
+				"icon": {
+					"light": "resources/icons/light/refresh.svg",
+					"dark": "resources/icons/dark/refresh.svg"
+				}
 			},
 			{
 				"command": "serverless.package",
@@ -66,13 +71,19 @@
 				"command": "serverless.deploy",
 				"title": "Deploy service",
 				"category": "Serverless",
-				"icon": "icons/cloud-upload.svg"
+				"icon": {
+					"light": "resources/icons/light/cloud-upload.svg",
+					"dark": "resources/icons/dark/cloud-upload.svg"
+				}
 			},
 			{
 				"command": "serverless.remove",
 				"title": "Remove service",
 				"category": "Serverless",
-				"icon": "icons/trash.svg"
+				"icon": {
+					"light": "resources/icons/light/trash.svg",
+					"dark": "resources/icons/dark/trash.svg"
+				}
 			},
 			{
 				"command": "serverless.openHandler",
@@ -93,18 +104,33 @@
 				"command": "serverless.deployFunction",
 				"title": "Deploy function",
 				"category": "Serverless",
-				"icon": "icons/function-upload.svg"
+				"icon": {
+					"light": "resources/icons/light/function-upload.svg",
+					"dark": "resources/icons/dark/function-upload.svg"
+				}
 			},
 			{
 				"command": "serverless.invoke",
 				"title": "Invoke function",
 				"category": "Serverless",
-				"icon": "icons/play.svg"
+				"icon": {
+					"light": "resources/icons/light/play.svg",
+					"dark": "resources/icons/dark/play.svg"
+				}
 			},
 			{
 				"command": "serverless.invokeLocal",
 				"title": "Invoke local",
 				"category": "Serverless"
+			},
+			{
+				"command": "cloudWatch.logs",
+				"title": "Open log",
+				"category": "CloudWatchLogs",
+				"icon": {
+					"light": "resources/icons/light/search.svg",
+					"dark": "resources/icons/dark/search.svg"
+				}
 			}
 		],
 		"menus": {
@@ -170,6 +196,15 @@
 					"command": "serverless.invoke",
 					"when": "viewItem == function",
 					"group": "inline"
+				},
+				{
+					"command": "cloudWatch.logs",
+					"when": "viewItem == log_group",
+					"group": "inline"
+				},
+				{
+					"command": "cloudWatch.logs",
+					"when": "viewItem == log_group"
 				}
 			],
 			"explorer/context": [
@@ -217,27 +252,52 @@
 				"serverlessCommand.aws.alias": {
 					"type": "string",
 					"default": "",
-					"description": "Lambda 함수에서 alias를 사용할 수 있도록 설정한다."
+					"description": "Lambda 함수에서 alias를 사용할 수 있도록 설정"
 				}
 			}
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"package": "vsce package"
-	},
-	"devDependencies": {
-		"@types/js-yaml": "^4.0.0",
-		"@types/lodash": "^4.14.168",
-		"@types/node": "^12.20.10",
-		"@types/vscode": "^1.55.0",
-		"tslint": "^6.1.3",
-		"typescript": "^4.2.4"
+		"vscode:prepublish": "npm run build && npm run compile",
+		"compile": "tsc -p tsconfig.extension.json",
+		"watch": "tsc -watch -p tsconfig.extension.json",
+		"package": "vsce package",
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"watch-build": "nodemon --watch src --ext js,css --exec \"npm run build\"",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject"
 	},
 	"dependencies": {
+		"@aws-sdk/client-cloudwatch-logs": "^3.23.0",
+		"@fortawesome/fontawesome-svg-core": "^1.2.35",
+		"@fortawesome/free-solid-svg-icons": "^5.15.3",
+		"@fortawesome/react-fontawesome": "^0.1.14",
+		"dayjs": "^1.10.6",
 		"js-yaml": "^4.1.0",
-		"lodash": "^4.17.21"
-	}
+		"lodash": "^4.17.21",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-router-dom": "^5.2.0",
+		"regex-parser": "^2.2.11"
+	},
+	"devDependencies": {
+		"@types/js-yaml": "^4.0.2",
+		"@types/lodash": "^4.14.171",
+		"@types/node": "^12.20.15",
+		"@types/react": "^17.0.15",
+		"@types/react-dom": "^17.0.9",
+		"@types/react-router-dom": "^5.1.8",
+		"@types/vscode": "^1.58.1",
+		"nodemon": "^2.0.12",
+		"react-scripts": "4.0.3",
+		"tslint": "^6.1.3",
+		"typescript": "^4.3.5"
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	]
 }

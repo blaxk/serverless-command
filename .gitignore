@@ -1,6 +1,15 @@
 /out
+/build
+/coverage
+
 /node_modules
 /.vscode-test
 /.DS_Store
 **/.DS_Store
+
 package-lock.json
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
