@@ -1,3 +1,6 @@
+## 1.5.1
+- AWS CloudWatchLogs message -  html parsing 개선 및 sorting 기능 추가
+
 ## 1.5.0
 - AWS CloudWatchLogs Context Menu에 추가
 - serverless.yml 파일인식 개선

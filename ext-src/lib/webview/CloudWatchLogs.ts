@@ -52,7 +52,7 @@ export class CloudWatchLogs extends CommandBase {
 
 				try {
 					// @ts-ignore
-					result = await this['_' + message.type](message.logGroupName, message.logStreamName)
+					result = await this['_' + message.type](message.logGroupName, message.logStreamName, message.startTime, message.endTime)
 				} catch (errorMsg) {
 					error = errorMsg;
 				}
@@ -155,11 +155,13 @@ export class CloudWatchLogs extends CommandBase {
 		}
 	}
 
-	private async _getLogEvents (logGroupName: string, logStreamName: string): Promise<any> {
+	private async _getLogEvents (logGroupName: string, logStreamName: string, startTime?: number, endTime?: number): Promise<any> {
 		try {
 			const logEventsCommand = new GetLogEventsCommand({
 				logGroupName,
-				logStreamName
+				logStreamName,
+				startTime,
+				endTime
 			});
 
 			// @ts-ignore

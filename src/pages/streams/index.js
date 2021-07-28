@@ -43,7 +43,9 @@ class Streams extends Component {
 		const query = location.query || {}
 
 		this.setState({
-			loading: true
+			loading: true,
+			list: [],
+			error: ''
 		})
 
 		vscode.send({
@@ -74,7 +76,8 @@ class Streams extends Component {
 		return (
 			<Layout history={history} location={location}>
 				<header>
-					<h2>{query.logGroupName || 'Log streams'}</h2>
+					<h2>Log streams</h2>
+					{/* <p>{query.logGroupName}</p> */}
 					<span className="btn-group">
 						<button type="button" title="refresh" disabled={loading} onClick={() => this.requestData()}>
 							<FontAwesomeIcon className="fa-icon" icon={faRedo} />
@@ -84,8 +87,8 @@ class Streams extends Component {
 				<div className="content streams">
 					{!loading && !error &&
 						<table>
-							{/* <th>Last event time</th>
-							<th>Log stream</th> */}
+							<th>Last event time</th>
+							<th>Log stream</th>
 							{list.map((data) => (
 								<tr key={data.logStreamName}>
 									<td>
@@ -102,7 +105,10 @@ class Streams extends Component {
 					}
 
 					{loading || !!error &&
-						<MainIcon />
+						<MainIcon message={error ? 'Error' : ''} />
+					}
+					{!loading && list.length === 0 &&
+						<MainIcon message="Not Found" />
 					}
 				</div>
 			</Layout>

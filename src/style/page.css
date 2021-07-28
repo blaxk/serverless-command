@@ -14,11 +14,21 @@
 .content.events {
 	padding-top: 20px;
 }
+.time-group button{
+	width: 52px;
+	background-color: var(--vscode-button-secondaryBackground);
+}
+.time-group button:hover{
+	background-color: var(--vscode-button-secondaryHoverBackground);
+}
+.time-group button.select{
+	color: var(--vscode-list-highlightForeground);
+}
 .content.events .search-area {
 	display: flex;
 	position: relative;
 	padding: 0 10px 20px 10px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 .content.events .search-area .form-wrap {
 	position: relative;
@@ -54,7 +64,14 @@
 	color: #505050;
 }
 
-.content.events li {
+.content.events ul {
+	padding: 15px 15px 0 15px;
+	margin: 0 0 20px 0;
+	border: solid 1px;
+	border-color: var(--vscode-list-hoverBackground);
+	border-radius: 5px;
+}
+.content.events ul li {
 	margin-bottom: 15px;
 }
 .content.events li pre {

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRedo, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faRedo, faTimes, faSortNumericUpAlt, faSortNumericDown } from '@fortawesome/free-solid-svg-icons'
 import dayjs from 'dayjs'
+import { encode } from 'html-entities'
 import regexParser from 'regex-parser'
 import Layout from '../../components/layouts/Layout'
 import MainIcon from '../../components/MainIcon'
@@ -19,12 +20,17 @@ class Events extends Component {
 			error: '',
 			keyword: '',
 			regExp: false,
-			findCount: 0
+			sortUp: false,
+			findCount: 0,
+			searchMin: 0
 		}
 
 		this.handleVSCode = this.handleVSCode.bind(this)
+		this.handleSort = this.handleSort.bind(this)
 		this.handleChange = this.handleChange.bind(this)
+		this.handleEmptyKeyword = this.handleEmptyKeyword.bind(this)
 		this.handleFind = this.handleFind.bind(this)
+		this.handleTime = this.handleTime.bind(this)
 	}
 
 	componentDidMount () {
@@ -46,6 +52,7 @@ class Events extends Component {
 
 	requestData () {
 		const { location } = this.props
+		const { searchMin } = this.state
 		const query = location.query || {}
 
 		this.setState({
@@ -53,17 +60,82 @@ class Events extends Component {
 			originList: [],
 			list: [],
 			findCount: 0,
-			keyword: ''
+			keyword: '',
+			error: ''
 		})
 
-		vscode.send({
-			type: 'getLogEvents',
-			logGroupName: query.logGroupName,
-			logStreamName: query.logStreamName
+		if (searchMin) {
+			vscode.send({
+				type: 'getLogEvents',
+				logGroupName: query.logGroupName,
+				logStreamName: query.logStreamName,
+				startTime: dayjs().subtract(searchMin, 'minute').valueOf(),
+				endTime: dayjs().valueOf()
+			})
+		} else {
+			vscode.send({
+				type: 'getLogEvents',
+				logGroupName: query.logGroupName,
+				logStreamName: query.logStreamName
+			})
+		}
+	}
+
+	groupBy (list) {
+		const clone = JSON.parse(JSON.stringify(list))
+		const result = []
+		const objs = clone.reduce((carry, el) => {
+			const group = el.ingestionTime
+
+			if (carry[group] === undefined) {
+				carry[group] = []
+			}
+
+			carry[group].push(el)
+			return carry
+		}, {})
+
+		for (const key in objs) {
+			result.push({
+				ingestionTime: key,
+				list: objs[key]
+			})
+		}
+
+		return result
+	}
+
+	sortBy (list, sortUp) {
+		const clone = JSON.parse(JSON.stringify(list))
+
+		return clone.sort((a, b) => {
+			if (a.ingestionTime > b.ingestionTime) {
+				return sortUp ? -1 : 1;
+			} else if (a.ingestionTime < b.ingestionTime) {
+				return sortUp ? 1 : -1;
+			} else {
+				return 0
+			}
 		})
 	}
 
+	handleSort () {
+		const { list, sortUp } = this.state
+
+		this.setState({
+			list: this.sortBy(list, !sortUp),
+			sortUp: !sortUp,
+		})
+	}
+
+	handleTime (searchMin) {
+		this.state.searchMin = searchMin
+		this.requestData()
+	}
+
 	handleVSCode (e) {
+		const { sortUp } = this.state
+
 		if (e.error) {
 			this.setState({
 				loading: false,
@@ -72,7 +144,7 @@ class Events extends Component {
 		} else {
 			const originList = e.result ? e.result : []
 			this.setState({
-				list: JSON.parse(JSON.stringify(originList)),
+				list: this.sortBy(this.groupBy(originList), sortUp),
 				originList,
 				loading: false
 			})
@@ -85,8 +157,18 @@ class Events extends Component {
 		})
 	}
 
+	handleEmptyKeyword () {
+		this.setState({
+			keyword: ''
+		})
+
+		if (this.keywordInput) {
+			this.keywordInput.focus()
+		}
+	}
+
 	handleFind (e) {
-		const { keyword, regExp, originList } = this.state
+		const { keyword, regExp, originList, sortUp } = this.state
 
 		if (e.charCode === 13) {
 			if (keyword) {
@@ -95,22 +177,25 @@ class Events extends Component {
 				let findCount = 0
 
 				for (const data of originList) {
+					let message = data.message.replace(reg, (str) => {
+						findCount++
+						return `{{{$$$highlight-start$$$}}}${str}{{{$$$highlight-end$$$}}}`
+					})
+
 					list.push({
+						ingestionTime: data.ingestionTime,
 						timestamp: data.timestamp,
-						message: data.message.replace(reg, (str) => {
-							findCount++
-							return `<span class="highlight">${str}</span>`
-						})
+						message: encode(message).replace(/{{{\$\$\$highlight-start\$\$\$}}}/g, '<span class="highlight">').replace(/{{{\$\$\$highlight-end\$\$\$}}}/g, '</span>')
 					})
 				}
 
 				this.setState({
-					list,
+					list: this.sortBy(this.groupBy(list), sortUp),
 					findCount
 				})
 			} else {
 				this.setState({
-					list: JSON.parse(JSON.stringify(originList)),
+					list: this.sortBy(this.groupBy(originList), sortUp),
 					findCount: 0
 				})
 			}
@@ -119,13 +204,24 @@ class Events extends Component {
 
 	render () {
 		const { history, location } = this.props
-		const { loading, list, error, keyword, regExp, findCount } = this.state
+		const { loading, originList, list, error, keyword, regExp, findCount, sortUp, searchMin } = this.state
+		const query = location.query || {}
 
 		return (
 			<Layout history={history} location={location}>
 				<header>
 					<h2>Log events</h2>
 					<span className="btn-group">
+						<span className="time-group">
+							<button type="button" disabled={loading} onClick={() => this.handleTime(0)}>Clear</button>
+							<button type="button" className={searchMin === 1 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(1)}>1m</button>
+							<button type="button" className={searchMin === 30 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(30)}>30m</button>
+							<button type="button" className={searchMin === 60 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(60)}>1h</button>
+							<button type="button" className={searchMin === 720 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(720)}>12h</button>
+						</span>
+						<button type="button" title="sort" disabled={loading} onClick={this.handleSort}>
+							<FontAwesomeIcon className="fa-icon" icon={sortUp ? faSortNumericUpAlt : faSortNumericDown} />
+						</button>
 						<button type="button" title="refresh" disabled={loading} onClick={() => this.requestData()}>
 							<FontAwesomeIcon className="fa-icon" icon={faRedo} />
 						</button>
@@ -134,8 +230,8 @@ class Events extends Component {
 				<div className="content events">
 					<div className="search-area">
 						<div className="form-wrap">
-							<input type="text" name="keyword" placeholder={regExp ? 'ex) /^test/g' : 'find keyword'} value={keyword} onChange={this.handleChange} onKeyPress={this.handleFind}/>
-							<span className="btn-empty" title="empty input" onClick={() => this.setState({ keyword: '' })}>
+							<input ref={ref => { this.keywordInput = ref }} type="text" name="keyword" placeholder={regExp ? 'ex) /^test/g' : 'find keyword'} value={keyword} onChange={this.handleChange} onKeyPress={this.handleFind}/>
+							<span className="btn-empty" title="empty input" onClick={this.handleEmptyKeyword}>
 								<FontAwesomeIcon className="fa-icon" icon={faTimes} />
 							</span>
 						</div>
@@ -148,18 +244,23 @@ class Events extends Component {
 						}
 					</div>
 					{!loading && !error &&
-						<ul>
-							{list.map((data, key) => (
-								<li key={data.timestamp + key}>
-									<strong>{dayjs(data.timestamp).format()}</strong>
-									<pre dangerouslySetInnerHTML={{ __html: data.message }}></pre>
-								</li>
-							))}
-						</ul>
+						list.map((group) => (
+							<ul className="group" key={`${query.logStreamName}_${group.ingestionTime}`}>
+								{group.list.map((data, key) => (
+									<li key={`${query.logStreamName}_${group.ingestionTime}_${data.timestamp}_${key}`}>
+										<strong>{dayjs(data.timestamp).format()}</strong>
+										<pre><code dangerouslySetInnerHTML={{ __html: data.message }}></code></pre>
+									</li>
+								))}
+							</ul>
+						))
 					}
 
 					{loading || !!error &&
-						<MainIcon />
+						<MainIcon message={error ? 'Error' : ''} />
+					}
+					{!loading && originList.length === 0 &&
+						<MainIcon message="Not Found" />
 					}
 				</div>
 			</Layout>

@@ -5,10 +5,10 @@
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 
-Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, TreeView를 이용하여 직관적이며 편리하게 개발할 수 있도록 도와줍니다.
-AWS Project에서는 CloudWatchLogs를 바로 확인할 수 있는 기능을 지원합니다.
+Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, TreeView를 이용하여 직관적이며 편리하게 개발할 수 있도록 도와줍니다.   
+AWS Project에서는 CloudWatchLogs를 바로 확인할 수 있는 기능을 지원합니다.   
 
-※ 해당 extension은 기존 `serverless-vscode` extension을 기반으로 재설계 되었습니다.
+※ 해당 extension은 기존 `serverless-vscode` extension을 기반으로 재설계 되었습니다.   
 
 &nbsp;
 
@@ -103,16 +103,17 @@ Lambda 함수에서 AWS 별칭을 사용할 수 있도록 설정 (default: "")
 
 > AWS CloudWatch Log를 엽니다.
 
-#### New Open log
 
-> AWS CloudWatch Log를 새 파일로 엽니다.
-
-&nbsp;
 
 ## ⚠️ Caution
 
-TreeView를 `serverless.yml` 파일을 파싱해서 구성하고 있습니다.
-하지만 serverless framework의 모든 표현식의 파싱을 지원하지 못하고 있어, 아래처럼 다른 파일을 import 한다거나, 변수처리 되어 있는 부분은 파싱하지 못합니다.
+`serverless.yml` 파일의 아래 항목들을 참조하여 TreeView를 구성합니다.   
+- service
+- provider.name
+- functions.{key}
+- functions.{key}.name
+
+현재는 serverless framework의 모든 표현식을 지원하지 않아, 아래처럼 다른 파일을 import 한다거나, 변수처리 되어 있는 부분은 파싱하지 못합니다.
 
 ``` yml
 custom: 
@@ -130,13 +131,9 @@ functions:
     name: ${sls:stage}-lambdaName
 ```
 
-> `serverless.yml` 파일의 아래 항목들을 참조하여 TreeView를 구성합니다.
-> - service
-> - provider.name
-> - functions.{key}
-> - functions.{key}.name
+&nbsp;
 
-AWS CloudWatch Logs 를 사용하기 위해서는 iam 권한이 필요합니다.
+AWS CloudWatch Logs 를 사용하기 위해서는 IAM 정책 설정이 필요합니다.
 ```json
 {
   "Version": "2012-10-17",

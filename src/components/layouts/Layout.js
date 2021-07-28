@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faStream } from '@fortawesome/free-solid-svg-icons'
 import vscode from '../../common/vscode'
 
 
@@ -64,6 +64,7 @@ class Layout extends Component {
 			<div className="wrap">
 				{!onlyPage &&
 					<div className="breadcrumb">
+						<FontAwesomeIcon className="fa-icon home" icon={faStream} />
 						{query.logStreamName ?
 							<Link to={{ pathname: '/streams', query: { logGroupName: query.logGroupName } }}>{query.logGroupName}</Link>
 							:

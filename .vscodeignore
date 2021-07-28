@@ -1,10 +1,12 @@
 .vscode/**
 .github/**
+.gitignore
+.editorconfig
 typings/**
-out/test/**
+build/test/**
 test/**
 **/*.ts
-**/*.map
-.gitignore
 tsconfig.json
+tsconfig.extension.json
 .vscode-test/**
+src/**
