@@ -65,15 +65,17 @@ ul, ol{
 	padding-left: 0;
 }
 pre{
-	white-space: pre-wrap;
+	/* white-space: pre-wrap; */
+	word-wrap: break-word;
+  white-space: break-spaces;
 	background-color: var(--vscode-list-hoverBackground);
 	margin: 0;
 	padding: 10px 15px;
 	border-radius: 3px;
 }
 pre code::selection{
-	color: #000;
-	background-color: #fee102;
+	color: var(--vscode-button-foreground);
+	background-color: var(--vscode-button-background);
 }
 button{
 	border-radius: 3px;
@@ -84,9 +86,30 @@ input[type=text] {
 	padding-right: 15px;
 }
 
+
+/* ----- input ----- */
+.form-wrap {
+	position: relative;
+}
+.form-wrap .btn-empty {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: transparent;
+	padding: 5px 10px;
+	opacity: 0.3;
+}
+.form-wrap .btn-empty:hover {
+	opacity: 1;
+}
+.form-wrap .btn-empty .fa-icon {
+	width: 12px;
+}
+
+
 /* ----- table ----- */
 table {
-	margin-top: 20px;
+	margin-top: 10px;
 	width: 100%;
 	border-collapse: collapse;
 }
@@ -94,7 +117,7 @@ table th {
 	padding: 10px 0 20px 0;
 	font-size: 1.1rem;
 }
-table tr:nth-child(even) td {
+table tr:nth-child(odd) td {
 	background-color: var(--vscode-list-hoverBackground);
 }
 table td {
@@ -124,12 +147,9 @@ table td {
 
 /* ----- highlight ----- */
 .highlight{
-	display: inline-block; 
-		display: inline-block; 
-	display: inline-block; 
-	position: relative;
-	/* background: linear-gradient(to top, #ffdd00 50%, transparent 50%); */
-	border-bottom: solid 3px #ffdd00;
-	padding: 0;
+	background-color: #fee102;
+	color: #000;
 }
-
+.highlight::selection{
+	background-color: #f69633;
+}

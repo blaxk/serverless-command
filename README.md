@@ -31,6 +31,10 @@ AWS Project에서는 CloudWatchLogs를 바로 확인할 수 있는 기능을 지
 serverless 명령어 앞쪽에 추가로 설정하는 명령어 설정 (npm start &&)
 > `npm start && serveless deplay`   
 
+### serverlessCommand.testFolderPath
+
+`Invoke function` 실행시 참조되는 <functionName>.json 파일의 상위 폴더경로 설정 (default: "./test")
+
 ### serverlessCommand.aws.stage
 
 기본 stage 설정 (default: "dev")
@@ -141,11 +145,12 @@ AWS CloudWatch Logs 를 사용하기 위해서는 IAM 정책 설정이 필요합
     {
       "Effect": "Allow",
       "Action": [
+        "logs:DescribeLogGroups",
         "logs:DescribeLogStreams",
         "logs:GetLogEvents"
       ],
       "Resource": [
-        "arn:aws:logs:<region>:<accountId>:log-group::log-stream:*"
+        "arn:aws:logs:<region>:<accountId>:log-group:*:log-stream:*"
       ]
     }
   ]

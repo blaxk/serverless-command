@@ -20,7 +20,7 @@ export class Remove extends CommandBase {
 			return Promise.reject(new Error('Target must be a container'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return window.showWarningMessage('Do you remove serverless service?',
 				{},
 				{ title: 'Remove serverless service' }
@@ -28,7 +28,7 @@ export class Remove extends CommandBase {
 				if ( !value ) return;
 				return Serverless.invoke('remove', {
 					'cwd': node.documentRoot,
-					...result
+					...config
 				});
 			});
 		});

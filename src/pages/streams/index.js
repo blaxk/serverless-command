@@ -107,7 +107,7 @@ class Streams extends Component {
 					{loading || !!error &&
 						<MainIcon message={error ? 'Error' : ''} />
 					}
-					{!loading && list.length === 0 &&
+					{!loading && !error && list.length === 0 &&
 						<MainIcon message="Not Found" />
 					}
 				</div>

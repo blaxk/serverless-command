@@ -20,11 +20,11 @@ export class Logs extends CommandBase {
 			return Promise.reject(new Error('Target must be a function'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return Serverless.invoke('logs', {
 				'cwd': node.documentRoot,
 				'function': node.name,
-				...result
+				...config
 			});
 		});
 	}

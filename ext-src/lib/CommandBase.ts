@@ -15,10 +15,12 @@ export abstract class CommandBase {
 		const awsProfile: string = configuration.get('serverlessCommand.aws.credentials') || '';
 		const alias: string = configuration.get('serverlessCommand.aws.alias') || '';
 		const firstCommand: string = configuration.get('serverlessCommand.firstCommand') || '';
+		const testFolderPath: string = configuration.get('serverlessCommand.testFolderPath') || './test';
 
 		return Promise.resolve({
 			nodeModulesPath,
 			firstCommand,
+			testFolderPath,
 			stage,
 			region,
 			awsProfile,

@@ -65,6 +65,14 @@ class Layout extends Component {
 				{!onlyPage &&
 					<div className="breadcrumb">
 						<FontAwesomeIcon className="fa-icon home" icon={faStream} />
+						{query.logGroupName ?
+							<Link className="home" to={{ pathname: '/groups' }}>Log groups</Link>
+							:
+							<span>Log groups</span>
+						}
+						{query.logGroupName &&
+							<FontAwesomeIcon className="fa-icon" icon={faChevronRight} />
+						}
 						{query.logStreamName ?
 							<Link to={{ pathname: '/streams', query: { logGroupName: query.logGroupName } }}>{query.logGroupName}</Link>
 							:

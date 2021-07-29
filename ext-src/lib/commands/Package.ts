@@ -20,10 +20,10 @@ export class Package extends CommandBase {
 			return Promise.reject(new Error('Target must be a container'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return Serverless.invoke('package', {
 				'cwd': node.documentRoot,
-				...result
+				...config
 			});
 		});
 	}

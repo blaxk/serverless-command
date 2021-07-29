@@ -5,17 +5,18 @@ import * as _ from 'lodash';
 import { window, workspace } from 'vscode';
 
 export interface IServerlessInvokeOptions {
-	'stage'?: string;
-	'region'?: string;
+	'stage': string;
+	'region': string;
+	'nodeModulesPath': string;
+	'awsProfile': string;
+	'firstCommand': string;
+	'testFolderPath': string;
+	'alias': string;
 	'log'?: boolean;
 	'data'?: string;
 	'cwd'?: string;
-	'alias'?: string;
 	'function'?: string;
 	'path'?: string;
-	'nodeModulesPath'?: string;
-	'awsProfile'?: string;
-	'firstCommand'?: string;
 }
 
 const ProcessingOptions = [

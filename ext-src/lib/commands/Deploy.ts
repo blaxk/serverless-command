@@ -1,6 +1,4 @@
-import * as _ from 'lodash';
-import * as path from 'path';
-import { ExtensionContext, Uri, window } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import { CommandBase } from '../CommandBase';
 import { Serverless } from '../Serverless';
 import { NodeKind, ServerlessNode } from '../ServerlessNode';
@@ -20,10 +18,10 @@ export class Deploy extends CommandBase {
 			return Promise.reject(new Error('Target must be a container'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return Serverless.invoke('deploy', {
 				'cwd': node.documentRoot,
-				...result
+				...config
 			});
 		});
 	}

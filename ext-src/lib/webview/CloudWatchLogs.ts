@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import { window, ViewColumn, Uri, Webview, WebviewPanel } from 'vscode';
+import { window, ViewColumn, Uri, Webview, WebviewPanel, env } from 'vscode';
 import { fromIni } from '@aws-sdk/credential-provider-ini';
-import { CloudWatchLogsClient, DescribeLogStreamsCommand, GetLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
+import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeLogStreamsCommand, GetLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { CommandBase } from '../CommandBase';
 import { IServerlessInvokeOptions } from '../Serverless';
 import { ServerlessNode } from '../ServerlessNode';
@@ -9,8 +9,6 @@ import { ServerlessNode } from '../ServerlessNode';
 /**
  * Wrapper for CloudWatchLogs.
  */
-
-
 export class CloudWatchLogs extends CommandBase {
 
 	private _panel?: WebviewPanel;
@@ -46,24 +44,38 @@ export class CloudWatchLogs extends CommandBase {
 		this._panel.webview.onDidReceiveMessage(async (message) => {
 			if (message.type === 'alert') {
 				window.showErrorMessage(message.value);
-			} else if (['getLogStreams', 'getLogEvents'].includes(message.type)) {
+			} else if (['getLogGroups', 'getLogStreams', 'getLogEvents'].includes(message.type)) {
 				let result = undefined;
 				let error = ''
 
 				try {
-					// @ts-ignore
-					result = await this['_' + message.type](message.logGroupName, message.logStreamName, message.startTime, message.endTime)
+					if (message.type === 'getLogGroups') {
+						// @ts-ignore
+						result = await this['_' + message.type](message.logGroupNamePrefix, message.nextToken)
+					} else {
+						// @ts-ignore
+						result = await this['_' + message.type](message.logGroupName, message.logStreamName, message.startTime, message.endTime)
+					}
 				} catch (errorMsg) {
 					error = errorMsg;
 				}
 
 				if (result) {
-					this.sendMessage({
-						type: message.type,
-						logGroupName: message.logGroupName,
-						logStreamName: message.logStreamName,
-						result
-					});
+					if (message.type === 'getLogGroups') {
+						this.sendMessage({
+							type: message.type,
+							result: result.logGroups,
+							nextToken: result.nextToken,
+							isAdd: result.isAdd
+						});
+					} else {
+						this.sendMessage({
+							type: message.type,
+							logGroupName: message.logGroupName,
+							logStreamName: message.logStreamName,
+							result
+						});
+					}
 				} else {
 					this.sendMessage({
 						type: message.type,
@@ -114,21 +126,31 @@ export class CloudWatchLogs extends CommandBase {
 		return !!this._panel
 	}
 
+	private _getBaseHtml (): string {
+		let html = ''
+		try {
+			const htmlPath = Uri.joinPath(this._extensionUri, 'build', 'index.html').toString();
+			html = fs.readFileSync(htmlPath.replace('file://', '')).toString();
+		} catch (error) {
+			console.error(error)
+		}
+
+		return html
+	}
+
 	private _getHtmlForWebview (webview: Webview) {
 		const basePathOnDisk = Uri.joinPath(this._extensionUri, 'build');
 		const baseUri = webview.asWebviewUri(basePathOnDisk);
 		const nonce = this._getNonce();
+		let html = this._getBaseHtml();
 
-		let html = '';
-
-		try {
-			const htmlPath = Uri.joinPath(this._extensionUri, 'build', 'index.html').toString();
-			html = fs.readFileSync(htmlPath.replace('file://', '')).toString();
+		if (html) {
+			// html = html.replace(/<html lang="[a-z\-]+">/, `<html lang="${env.language}">`);
 			html = html.replace(/(src|href)="\.\//g, `$1="${baseUri}/`);
-			html = html.replace(/\<\/head\>/, `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src vscode-resource: 'unsafe-inline'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';"></head>`)
-			html = html.replace(/\<script/g, `<script nonce="${nonce}"`)
-		} catch (error) {
-			html = `<html><body><h1>Error</h1><div>${error.message}<div></body></html>`;
+			html = html.replace(/<\/head>/, `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src vscode-resource: 'unsafe-inline'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';"></head>`)
+			html = html.replace(/<script/g, `<script nonce="${nonce}"`)
+		} else {
+			html = `<html><body><h1>Error</h1><div>Html not found<div></body></html>`;
 		}
 
 		return html;
@@ -137,6 +159,21 @@ export class CloudWatchLogs extends CommandBase {
 	private _getLogGroupName (config: IServerlessInvokeOptions, node: ServerlessNode): string {
 		const { service, name } = node.data;
 		return `/aws/lambda/${service}-${config.stage}-${name}`
+	}
+
+	private async _getLogGroups (logGroupNamePrefix?: string, token?: string): Promise<any> {
+		try {
+			const logStreamsCommand = new DescribeLogGroupsCommand({
+				nextToken: token || undefined,
+				logGroupNamePrefix: logGroupNamePrefix || undefined
+			});
+
+			// @ts-ignore
+			const { logGroups, nextToken } = await this._client.send(logStreamsCommand);
+			return Promise.resolve({ logGroups, nextToken, isAdd: !!token })
+		} catch (error) {
+			return Promise.reject(error.message)
+		}
 	}
 
 	private async _getLogStreams (logGroupName: string): Promise<any> {
@@ -161,11 +198,12 @@ export class CloudWatchLogs extends CommandBase {
 				logGroupName,
 				logStreamName,
 				startTime,
-				endTime
+				endTime,
+				limit: 1000
 			});
 
 			// @ts-ignore
-			const { events } = await this._client.send(logEventsCommand);
+			const { events, nextForwardToken, nextBackwardToken } = await this._client.send(logEventsCommand);
 			return Promise.resolve(events)
 		} catch (error) {
 			return Promise.reject(error.message)

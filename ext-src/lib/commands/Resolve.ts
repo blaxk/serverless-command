@@ -20,10 +20,10 @@ export class Resolve extends CommandBase {
 			return Promise.reject(new Error('Target must be a container'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return Serverless.invokeWithResult('print', {
 				'cwd': node.documentRoot,
-				...result
+				...config
 			});
 		}).then((resolvedYaml: string) => {
 			return workspace.openTextDocument(Uri.parse('untitled:' + path.join(node.documentRoot, 'resolved.yml')))

@@ -8,5 +8,7 @@ test/**
 **/*.ts
 tsconfig.json
 tsconfig.extension.json
+tslint.json
 .vscode-test/**
 src/**
+public/**

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRedo, faTimes, faSortNumericUpAlt, faSortNumericDown } from '@fortawesome/free-solid-svg-icons'
+import { faRedo, faTimes, faSortNumericUpAlt, faSortNumericDown, faAngleUp, faAngleDown, faAngleDoubleDown, faAngleDoubleUp } from '@fortawesome/free-solid-svg-icons'
 import dayjs from 'dayjs'
 import { encode } from 'html-entities'
 import regexParser from 'regex-parser'
+import isJSON from 'is-json'
+import jsonFormat from 'json-format'
 import Layout from '../../components/layouts/Layout'
 import MainIcon from '../../components/MainIcon'
 import vscode from '../../common/vscode'
@@ -20,9 +22,11 @@ class Events extends Component {
 			error: '',
 			keyword: '',
 			regExp: false,
-			sortUp: false,
+			sortUp: true,
 			findCount: 0,
-			searchMin: 0
+			searchMin: 60,
+			allExtends: false,
+			extendPool: {}
 		}
 
 		this.handleVSCode = this.handleVSCode.bind(this)
@@ -31,10 +35,16 @@ class Events extends Component {
 		this.handleEmptyKeyword = this.handleEmptyKeyword.bind(this)
 		this.handleFind = this.handleFind.bind(this)
 		this.handleTime = this.handleTime.bind(this)
+		this.handleExtend = this.handleExtend.bind(this)
 	}
 
 	componentDidMount () {
 		vscode.on('getLogEvents', this.handleVSCode)
+
+		this.setState({
+			allExtends: this.isLambdaLog()
+		})
+
 		this.requestData()
 	}
 
@@ -61,7 +71,8 @@ class Events extends Component {
 			list: [],
 			findCount: 0,
 			keyword: '',
-			error: ''
+			error: '',
+			extendPool: {}
 		})
 
 		if (searchMin) {
@@ -81,25 +92,58 @@ class Events extends Component {
 		}
 	}
 
+	isLambdaLog () {
+		const { location } = this.props
+		const query = location.query || {}
+		return /^\/aws\/lambda\//.test(query.logGroupName)
+	}
+
+	paseFormat (originList) {
+		const { location } = this.props
+		const query = location.query || {}
+
+		for (const key in originList) {
+			const data = originList[key]
+			data.id = `${query.logStreamName}_${data.ingestionTime}_${data.timestamp}_${key}`
+			
+			if (isJSON(data.message)) {
+				data.jsonMessage = jsonFormat(JSON.parse(data.message), {
+					type: 'space',
+					size: 4
+				})
+			}
+		}
+
+		return originList
+	}
+
 	groupBy (list) {
 		const clone = JSON.parse(JSON.stringify(list))
-		const result = []
-		const objs = clone.reduce((carry, el) => {
-			const group = el.ingestionTime
+		let result = []
 
-			if (carry[group] === undefined) {
-				carry[group] = []
+		//only lambda log
+		if (this.isLambdaLog()) {
+			const objs = clone.reduce((carry, el) => {
+				const group = el.ingestionTime
+
+				if (carry[group] === undefined) {
+					carry[group] = []
+				}
+
+				carry[group].push(el)
+				return carry
+			}, {})
+
+			for (const key in objs) {
+				result.push({
+					ingestionTime: key,
+					list: objs[key]
+				})
 			}
-
-			carry[group].push(el)
-			return carry
-		}, {})
-
-		for (const key in objs) {
-			result.push({
-				ingestionTime: key,
-				list: objs[key]
-			})
+		} else {
+			if (list.length) {
+				result = clone
+			}
 		}
 
 		return result
@@ -133,6 +177,40 @@ class Events extends Component {
 		this.requestData()
 	}
 
+	handleExtend (id) {
+		const { allExtends, extendPool, originList } = this.state
+
+		if (id) {
+			const pool = {
+				...extendPool
+			}
+
+			if (!pool[id]) {
+				pool[id] = true
+			} else {
+				delete pool[id]
+			}
+
+			this.setState({
+				allExtends: false,
+				extendPool: pool
+			})
+		} else {
+			const pool = {}
+
+			if (!allExtends) {
+				for (const data of originList) {
+					pool[data.id] = true
+				}
+			}
+
+			this.setState({
+				allExtends: !allExtends,
+				extendPool: pool
+			})
+		}
+	}
+
 	handleVSCode (e) {
 		const { sortUp } = this.state
 
@@ -142,7 +220,7 @@ class Events extends Component {
 				error: e.error
 			})
 		} else {
-			const originList = e.result ? e.result : []
+			const originList = this.paseFormat(e.result ? e.result : [])
 			this.setState({
 				list: this.sortBy(this.groupBy(originList), sortUp),
 				originList,
@@ -177,15 +255,15 @@ class Events extends Component {
 				let findCount = 0
 
 				for (const data of originList) {
-					let message = data.message.replace(reg, (str) => {
-						findCount++
-						return `{{{$$$highlight-start$$$}}}${str}{{{$$$highlight-end$$$}}}`
-					})
+					const match = this.matchMessage(reg, data.message)
+					findCount += match.count
+
+					data.jsonMessage
 
 					list.push({
-						ingestionTime: data.ingestionTime,
-						timestamp: data.timestamp,
-						message: encode(message).replace(/{{{\$\$\$highlight-start\$\$\$}}}/g, '<span class="highlight">').replace(/{{{\$\$\$highlight-end\$\$\$}}}/g, '</span>')
+						...data,
+						message: match.message,
+						jsonMessage: data.jsonMessage ? this.matchMessage(reg, data.jsonMessage).message : undefined
 					})
 				}
 
@@ -202,10 +280,72 @@ class Events extends Component {
 		}
 	}
 
+	matchMessage (reg, originMsg) {
+		let count = 0;
+		let message = originMsg.replace(reg, (str) => {
+			count++
+			return `{{{$$$highlight-start$$$}}}${str}{{{$$$highlight-end$$$}}}`
+		})
+
+		if (count) {
+			message = encode(message).replace(/{{{\$\$\$highlight-start\$\$\$}}}/g, '<span class="highlight">').replace(/{{{\$\$\$highlight-end\$\$\$}}}/g, '</span>')
+		}
+
+		return {
+			count,
+			message
+		}
+	}
+
+	getList (list, query) {
+		const { allExtends, extendPool } = this.state
+
+		if (this.isLambdaLog()) {
+			return (
+				list.map((group) => (
+					<ul className="group" key={`${query.logStreamName}_${group.ingestionTime}`}>
+						{group.list.map((data) => (
+							<li key={data.id}>
+								<strong className="date" onClick={() => this.handleExtend(data.id)}>
+									<FontAwesomeIcon className="fa-icon" icon={allExtends || extendPool[data.id] ? faAngleDown : faAngleUp} />
+									{dayjs(data.timestamp).format()}
+								</strong>
+								<pre>
+									<code className={allExtends || extendPool[data.id] ? 'extend' : ''} dangerouslySetInnerHTML={{
+										__html: (allExtends || extendPool[data.id]) && data.jsonMessage ? data.jsonMessage : data.message
+									}}></code>
+								</pre>
+							</li>
+						))}
+					</ul>
+				))
+			)
+		} else {
+			return (
+				<ul className="group">
+					{list.map((data) => (
+						<li key={data.id}>
+							<strong className="date" onClick={() => this.handleExtend(data.id)}>
+								<FontAwesomeIcon className="fa-icon" icon={allExtends || extendPool[data.id] ? faAngleDown : faAngleUp} />
+								{dayjs(data.timestamp).format()}
+							</strong>
+							<pre>
+								<code className={allExtends || extendPool[data.id] ? 'extend' : ''} dangerouslySetInnerHTML={{
+									__html: (allExtends || extendPool[data.id]) && data.jsonMessage ? data.jsonMessage : data.message
+								}}></code>
+							</pre>
+						</li>
+					))}
+				</ul>
+			)
+		}
+	}
+
 	render () {
 		const { history, location } = this.props
-		const { loading, originList, list, error, keyword, regExp, findCount, sortUp, searchMin } = this.state
+		const { loading, originList, list, error, keyword, regExp, findCount, sortUp, searchMin, allExtends } = this.state
 		const query = location.query || {}
+		const isLambda = this.isLambdaLog()
 
 		return (
 			<Layout history={history} location={location}>
@@ -217,11 +357,19 @@ class Events extends Component {
 							<button type="button" className={searchMin === 1 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(1)}>1m</button>
 							<button type="button" className={searchMin === 30 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(30)}>30m</button>
 							<button type="button" className={searchMin === 60 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(60)}>1h</button>
+							<button type="button" className={searchMin === 180 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(180)}>3h</button>
 							<button type="button" className={searchMin === 720 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(720)}>12h</button>
 						</span>
-						<button type="button" title="sort" disabled={loading} onClick={this.handleSort}>
-							<FontAwesomeIcon className="fa-icon" icon={sortUp ? faSortNumericUpAlt : faSortNumericDown} />
+						<button type="button" title="list all extend" disabled={loading} onClick={() => this.handleExtend()}>
+							<FontAwesomeIcon className="fa-icon" icon={allExtends ? faAngleDoubleDown : faAngleDoubleUp} />
 						</button>
+
+						{isLambda &&
+							<button type="button" title="list sorting" disabled={loading} onClick={this.handleSort}>
+								<FontAwesomeIcon className="fa-icon" icon={sortUp ? faSortNumericUpAlt : faSortNumericDown} />
+							</button>
+						}
+						
 						<button type="button" title="refresh" disabled={loading} onClick={() => this.requestData()}>
 							<FontAwesomeIcon className="fa-icon" icon={faRedo} />
 						</button>
@@ -239,27 +387,16 @@ class Events extends Component {
 							<input type="checkbox" name="regExp" id="regexp" checked={regExp} onChange={this.handleChange}/>
 							<label for="regexp">RegExp</label>
 						</span>
-						{findCount > 0 &&
-							<span className="result-count">result: {findCount}</span>
-						}
+						<span className="result-count">result: {findCount}/{originList.length} (limit 1000)</span>
 					</div>
 					{!loading && !error &&
-						list.map((group) => (
-							<ul className="group" key={`${query.logStreamName}_${group.ingestionTime}`}>
-								{group.list.map((data, key) => (
-									<li key={`${query.logStreamName}_${group.ingestionTime}_${data.timestamp}_${key}`}>
-										<strong>{dayjs(data.timestamp).format()}</strong>
-										<pre><code dangerouslySetInnerHTML={{ __html: data.message }}></code></pre>
-									</li>
-								))}
-							</ul>
-						))
+						this.getList(list, query)
 					}
 
 					{loading || !!error &&
 						<MainIcon message={error ? 'Error' : ''} />
 					}
-					{!loading && originList.length === 0 &&
+					{!loading && !error && originList.length === 0 &&
 						<MainIcon message="Not Found" />
 					}
 				</div>

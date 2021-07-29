@@ -1,6 +1,4 @@
-import * as _ from 'lodash';
-import * as path from 'path';
-import { ExtensionContext, Uri, window } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import { CommandBase } from '../CommandBase';
 import { Serverless } from '../Serverless';
 import { NodeKind, ServerlessNode } from '../ServerlessNode';
@@ -20,11 +18,11 @@ export class DeployFunction extends CommandBase {
 			return Promise.reject(new Error('Target must be a function'));
 		}
 
-		return CommandBase.getConfig().then(result => {
+		return CommandBase.getConfig().then(config => {
 			return Serverless.invoke('deploy function', {
 				'cwd': node.documentRoot,
 				'function': node.name,
-				...result
+				...config
 			});
 		});
 	}
