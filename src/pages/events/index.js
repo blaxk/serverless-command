@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRedo, faTimes, faSortNumericUpAlt, faSortNumericDown, faAngleUp, faAngleDown, faAngleDoubleDown, faAngleDoubleUp } from '@fortawesome/free-solid-svg-icons'
+import { faRedo, faTimes, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import dayjs from 'dayjs'
 import { encode } from 'html-entities'
 import regexParser from 'regex-parser'
@@ -30,7 +30,6 @@ class Events extends Component {
 		}
 
 		this.handleVSCode = this.handleVSCode.bind(this)
-		this.handleSort = this.handleSort.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleEmptyKeyword = this.handleEmptyKeyword.bind(this)
 		this.handleFind = this.handleFind.bind(this)
@@ -163,22 +162,13 @@ class Events extends Component {
 		})
 	}
 
-	handleSort () {
-		const { list, sortUp } = this.state
-
-		this.setState({
-			list: this.sortBy(list, !sortUp),
-			sortUp: !sortUp,
-		})
-	}
-
 	handleTime (searchMin) {
 		this.state.searchMin = searchMin
 		this.requestData()
 	}
 
 	handleExtend (id) {
-		const { allExtends, extendPool, originList } = this.state
+		const { extendPool } = this.state
 
 		if (id) {
 			const pool = {
@@ -193,19 +183,6 @@ class Events extends Component {
 
 			this.setState({
 				allExtends: false,
-				extendPool: pool
-			})
-		} else {
-			const pool = {}
-
-			if (!allExtends) {
-				for (const data of originList) {
-					pool[data.id] = true
-				}
-			}
-
-			this.setState({
-				allExtends: !allExtends,
 				extendPool: pool
 			})
 		}
@@ -230,9 +207,31 @@ class Events extends Component {
 	}
 
 	handleChange (e) {
-		this.setState({
-			[e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
-		})
+		const { originList, list } = this.state
+
+		if (e.target.name === 'allExtends') {
+			const pool = {}
+
+			if (e.target.checked) {
+				for (const data of originList) {
+					pool[data.id] = true
+				}
+			}
+
+			this.setState({
+				allExtends: e.target.checked,
+				extendPool: pool
+			})
+		} else if (e.target.name === 'sortUp') {
+			this.setState({
+				list: this.sortBy(list, e.target.checked),
+				sortUp: e.target.checked,
+			})
+		} else {
+			this.setState({
+				[e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
+			})
+		}
 	}
 
 	handleEmptyKeyword () {
@@ -306,7 +305,7 @@ class Events extends Component {
 					<ul className="group" key={`${query.logStreamName}_${group.ingestionTime}`}>
 						{group.list.map((data) => (
 							<li key={data.id}>
-								<strong className="date" onClick={() => this.handleExtend(data.id)}>
+								<strong className="date" title={allExtends || extendPool[data.id] ? 'reduce' : 'extend'} onClick={() => this.handleExtend(data.id)}>
 									<FontAwesomeIcon className="fa-icon" icon={allExtends || extendPool[data.id] ? faAngleDown : faAngleUp} />
 									{dayjs(data.timestamp).format()}
 								</strong>
@@ -321,23 +320,25 @@ class Events extends Component {
 				))
 			)
 		} else {
-			return (
-				<ul className="group">
-					{list.map((data) => (
-						<li key={data.id}>
-							<strong className="date" onClick={() => this.handleExtend(data.id)}>
-								<FontAwesomeIcon className="fa-icon" icon={allExtends || extendPool[data.id] ? faAngleDown : faAngleUp} />
-								{dayjs(data.timestamp).format()}
-							</strong>
-							<pre>
-								<code className={allExtends || extendPool[data.id] ? 'extend' : ''} dangerouslySetInnerHTML={{
-									__html: (allExtends || extendPool[data.id]) && data.jsonMessage ? data.jsonMessage : data.message
-								}}></code>
-							</pre>
-						</li>
-					))}
-				</ul>
-			)
+			if (list.length) {
+				return (
+					<ul className="group">
+						{list.map((data) => (
+							<li key={data.id}>
+								<strong className="date" title={allExtends || extendPool[data.id] ? 'reduce' : 'extend'} onClick={() => this.handleExtend(data.id)}>
+									<FontAwesomeIcon className="fa-icon" icon={allExtends || extendPool[data.id] ? faAngleDown : faAngleUp} />
+									{dayjs(data.timestamp).format()}
+								</strong>
+								<pre>
+									<code className={allExtends || extendPool[data.id] ? 'extend' : ''} dangerouslySetInnerHTML={{
+										__html: (allExtends || extendPool[data.id]) && data.jsonMessage ? data.jsonMessage : data.message
+									}}></code>
+								</pre>
+							</li>
+						))}
+					</ul>
+				)
+			}
 		}
 	}
 
@@ -359,16 +360,8 @@ class Events extends Component {
 							<button type="button" className={searchMin === 60 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(60)}>1h</button>
 							<button type="button" className={searchMin === 180 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(180)}>3h</button>
 							<button type="button" className={searchMin === 720 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(720)}>12h</button>
+							<button type="button" className={searchMin === 1440 ? 'select' : ''} disabled={loading} onClick={() => this.handleTime(1440)}>24h</button>
 						</span>
-						<button type="button" title="list all extend" disabled={loading} onClick={() => this.handleExtend()}>
-							<FontAwesomeIcon className="fa-icon" icon={allExtends ? faAngleDoubleDown : faAngleDoubleUp} />
-						</button>
-
-						{isLambda &&
-							<button type="button" title="list sorting" disabled={loading} onClick={this.handleSort}>
-								<FontAwesomeIcon className="fa-icon" icon={sortUp ? faSortNumericUpAlt : faSortNumericDown} />
-							</button>
-						}
 						
 						<button type="button" title="refresh" disabled={loading} onClick={() => this.requestData()}>
 							<FontAwesomeIcon className="fa-icon" icon={faRedo} />
@@ -389,6 +382,20 @@ class Events extends Component {
 						</span>
 						<span className="result-count">result: {findCount}/{originList.length} (limit 1000)</span>
 					</div>
+					<div className="option-area">
+						<span className="check-wrap">
+							<input type="checkbox" name="allExtends" id="allExtends" checked={allExtends} onChange={this.handleChange} />
+							<label for="allExtends">Extend list all</label>
+						</span>
+
+						{isLambda &&
+							<span className="check-wrap">
+								<input type="checkbox" name="sortUp" id="sortUp" checked={sortUp} onChange={this.handleChange} />
+								<label for="sortUp">Sort desc list</label>
+							</span>
+						}
+					</div>
+					
 					{!loading && !error &&
 						this.getList(list, query)
 					}

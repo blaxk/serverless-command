@@ -73,12 +73,15 @@ pre{
 	padding: 10px 15px;
 	border-radius: 3px;
 }
-pre code::selection{
+pre code::selection {
 	color: var(--vscode-button-foreground);
 	background-color: var(--vscode-button-background);
 }
 button{
 	border-radius: 3px;
+}
+button.btn-black {
+	background-color: #000;
 }
 input[type=text] {
 	border-radius: 3px;

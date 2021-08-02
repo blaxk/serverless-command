@@ -47,7 +47,7 @@
 	display: flex;
 	position: relative;
 	padding: 0 10px 20px 10px;
-	margin-bottom: 10px;
+	/* margin-bottom: 10px; */
 }
 .content.events .search-area .form-wrap {
 	position: relative;
@@ -65,8 +65,15 @@
 .content.events .search-area .result-count {
 	position: absolute;
 	right: 0;
-	padding: 10px 10px 0 0;
+	padding: 8px 10px 0 0;
 	opacity: 0.7;
+}
+
+.content.events .option-area {
+	padding: 0 10px 10px;
+}
+.content.events .option-area span {
+	margin-right: 10px;
 }
 
 .content.events ul {

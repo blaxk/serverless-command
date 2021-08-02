@@ -1,14 +1,12 @@
 
-## Serverless Framework for VSCode
+## Serverless Framework extension for VSCode
 
 [![Version](https://vsmarketplacebadge.apphb.com/version/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/blaxk.serverless-command.svg)](https://marketplace.visualstudio.com/items?itemName=blaxk.serverless-command)
 
-Serverless Framework 을 VSCode에서 손쉽게 실행할수 있으며, TreeView를 이용하여 직관적이며 편리하게 개발할 수 있도록 도와줍니다.   
-AWS Project에서는 CloudWatchLogs를 바로 확인할 수 있는 기능을 지원합니다.   
-
-※ 해당 extension은 기존 `serverless-vscode` extension을 기반으로 재설계 되었습니다.   
+Serverless Framework can be easily executed in VSCode, and using TreeView helps intuitive and convenient development.   
+AWS Project supports the ability to immediately check CloudWatchLogs.   
 
 &nbsp;
 
@@ -22,36 +20,42 @@ AWS Project에서는 CloudWatchLogs를 바로 확인할 수 있는 기능을 지
 
 &nbsp;
 
+### AWS CloudWatch Logs
+![AWS CloudWatch Logs](resources/exsample3.gif "AWS CloudWatch Logs")
+
+
+&nbsp;
+
 ## Configuration
 
-`기본설정 > 설정 > Serverless Command` 에서 설정할 수 있습니다.  
+This extension contributes the following settings: 
 
 ### serverlessCommand.firstCommand
 
-serverless 명령어 앞쪽에 추가로 설정하는 명령어 설정 (npm start &&)
+Command setting that is additionally set before the serverless command. (npm start &&)
 > `npm start && serveless deplay`   
 
 ### serverlessCommand.testFolderPath
 
-`Invoke function` 실행시 참조되는 <functionName>.json 파일의 상위 폴더경로 설정 (default: "./test")
+Set the parent folder path of the <functionName>.json file referenced when executing `Invoke function` (default: "./test")
 
 ### serverlessCommand.aws.stage
 
-기본 stage 설정 (default: "dev")
+stage settings (default: "dev")
 
 ### serverlessCommand.aws.region
 
-기본 region 설정 (default: "ap-northeast-2") 
+region settings (default: "ap-northeast-2") 
 
 ### serverlessCommand.aws.credentials
 
-AWS credentials profile 별칭을 별도로 설정시 사용   
-~/.aws/credentials 파일의 등록되어 있는 별칭 (default: "")
+Setting When Using AWS Credential Profile Alias   
+Registered alias in ~/.aws/credentials file (default: "")
 
 ### serverlessCommand.aws.alias
 
-Lambda 함수에서 AWS 별칭을 사용할 수 있도록 설정 (default: "")   
-> serverless-aws-alias plugin 참고
+Set AWS Alias Available to Lambda Functions (default: "")   
+> See the description of the serverless-aws-alias plugin.
 
 &nbsp;
 
@@ -60,64 +64,66 @@ Lambda 함수에서 AWS 별칭을 사용할 수 있도록 설정 (default: "")
 #### Package service
 
 > `serverless package`   
-> AWS에 배포가 가능한 상태로 .serverless 폴더에 해당 파일들을 packaging
+> Package the files in the .serverless folder in a state that can be deployed to AWS
 
 #### Deploy service
 
 > `serverless deploy`   
-> AWS에 어플리케이션을 배포   
-> 모든 설정이 배포되기 때문에 몇 분씩 소요될 수도 있습니다.
+> Deploy your application on AWS   
+> This may take several minutes as all settings are deployed.
 
 #### Resolve
 
-> Resolve를 사용하면 생성 된 resolved.yml, 즉 모든 serverless 변수가 선택된 스테이지에 대한 값으로 해석 된 serverless.yml을 볼 수 있습니다.
+> With Resolve you can see the generated resolved.yml i.e. serverless.yml where all serverless variables are resolved to values for the selected stage.
 
 #### Deploy function
 
 > `serverless deploy function`   
-> 해당 함수와 관련된 파일을 AWS에 배포   
-> 파일만 배포하기때문에 배포속도가 빠릅니다.
+> Deploy the file related to that function to AWS   
+> Because it distributes only files, the distribution speed is fast.
 
 #### Invoke function
 
 > `serverless invoke function`   
-> 해당 함수를 AWS Lambda 에서 실행  
-> `./test/<functionName>.json` 파일을 참조하여 호출 (해당 파일이 없으면 오류가 발생합니다.)   
-> 호출 된 함수에 전달할 입력 컨텍스트를 보유하는 json 파일   
+> Invoke that function in AWS Lambda  
+> Invoke with reference to `./test/<functionName>.json` file (If that file does not exist, an error occurs)   
+> A json file holding input data to be passed to the invoked function as the event.   
 
 #### Invoke local
 
 > `serverless invoke local function`   
-> 해당 함수를 local 에서 실행한다.   
-> `./test/<functionName>.json` 파일을 참조하여 호출 (해당 파일이 없으면 오류가 발생합니다.)   
-> 호출 된 함수에 전달할 입력 컨텍스트를 보유하는 json 파일   
+> Invoke the function in local.   
+> Invoke with reference to `./test/<functionName>.json` file (If that file does not exist, an error occurs)   
+> A json file holding input data to be passed to the invoked function as the event.      
 
 
 #### Show logs
 
-> 출력 창에 배포 된 기능의 온라인 로그를 검색하고 표시합니다.
+> Retrieve and show the online logs of the deployed function in the output pane.
 
 #### Open handler
 
-> 함수와 관련된 핸들러 소스 파일을 엽니다.
+> Open the handler source file that is associated with the function.
 
 &nbsp;
 
 #### Open log
 
-> AWS CloudWatch Log를 엽니다.
+> Open AWS CloudWatch Logs.
 
-
+&nbsp;
 
 ## ⚠️ Caution
 
-`serverless.yml` 파일의 아래 항목들을 참조하여 TreeView를 구성합니다.   
+Create a TreeView by referring to the following items in the `serverless.yml` file.   
 - service
 - provider.name
 - functions.{key}
 - functions.{key}.name
 
-현재는 serverless framework의 모든 표현식을 지원하지 않아, 아래처럼 다른 파일을 import 한다거나, 변수처리 되어 있는 부분은 파싱하지 못합니다.
+Currently, not all expressions in serverless frameworks are supported.   
+It may not be possible to interpret other files as below, or parts that are variable.     
+
 
 ``` yml
 custom: 
@@ -137,7 +143,7 @@ functions:
 
 &nbsp;
 
-AWS CloudWatch Logs 를 사용하기 위해서는 IAM 정책 설정이 필요합니다.
+To use AWS CloudWatch Logs, you need to set up an IAM policy.   
 ```json
 {
   "Version": "2012-10-17",
@@ -156,3 +162,8 @@ AWS CloudWatch Logs 를 사용하기 위해서는 IAM 정책 설정이 필요합
   ]
 }
 ```
+
+&nbsp;
+&nbsp;
+
+※ This extension has been redesigned based on the existing `serverless-vscode` extension.   
