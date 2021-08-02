@@ -126,7 +126,7 @@ class Groups extends Component {
 				<div className="content groups">
 					{!loading && !error &&
 						<table>
-							<th>Last group</th>
+							<th>Log group</th>
 							<th>Retention</th>
 							{list.map((data) => (
 								<tr key={data.logGroupName}>

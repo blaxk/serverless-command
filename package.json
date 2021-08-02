@@ -3,7 +3,7 @@
 	"displayName": "Serverless command",
 	"description": "Serverless Framework can be easily executed in VSCode, and using TreeView helps intuitive and convenient development.",
 	"icon": "resources/icon.png",
-	"version": "1.5.4",
+	"version": "1.5.5",
 	"publisher": "blaxk",
 	"author": "blaxk",
 	"engines": {

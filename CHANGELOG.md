@@ -1,4 +1,4 @@
-## 1.5.4
+## 1.5.5
 - AWS CloudWatchLogs messages -  html parsing 개선 및 sorting 기능 추가
 - AWS CloudWatchLogs - Lambda로그 이외의 Log groups도 조회할 수 있도록 수정
 - Invoke function 실행시 참조되는 <functionName>.json 파일의 상위 폴더경로 설정할 수 있도록 수정
