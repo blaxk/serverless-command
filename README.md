@@ -41,11 +41,11 @@ Set the parent folder path of the <functionName>.json file referenced when execu
 
 ### serverlessCommand.aws.stage
 
-stage settings (default: "dev")
+Default stage for builds and deployments (default: "dev")
 
 ### serverlessCommand.aws.region
 
-region settings (default: "ap-northeast-2") 
+Default region for builds and deployments (default: "ap-northeast-2") 
 
 ### serverlessCommand.aws.credentials
 
