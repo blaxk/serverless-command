@@ -1,3 +1,6 @@
+## 1.5.6
+- Extension 옵션설정 오류 수정
+
 ## 1.5.5
 - AWS CloudWatchLogs messages -  html parsing 개선 및 sorting 기능 추가
 - AWS CloudWatchLogs - Lambda로그 이외의 Log groups도 조회할 수 있도록 수정

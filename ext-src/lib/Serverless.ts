@@ -71,7 +71,9 @@ export class Serverless {
 
 		_.forEach(options, (value: any, key: string) => {
 			if (key && value) {
-				commandOptions.push(`--${key}=${value}`);
+				if (!['testFolderPath', 'firstCommand'].includes(key)) {
+					commandOptions.push(`--${key}=${value}`);
+				}
 			} else if (key && value === false) {
 				commandOptions.push(`--${key}`);
 			}
